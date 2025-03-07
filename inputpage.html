@@ -22,32 +22,25 @@
     <div class="navBar">
         <img src="img/logo.png" class="logo" onclick="navigateToLandingPage()">
         <ul class="navBarItems">
-            <li onclick="navigateToLandingPage()"><a>Home</a></li>
+            <li><a href="#home" onclick="navigateToLandingPage()">Home</a></li>
             <li><a href="#templates">Templates</a></li>
             <li><a href="#start">Start</a></li>
             <li><a href="#help">Help</a></li>
         </ul>
     </div>
 
-    <div class="mainPage">
-        <div class="mainPageLeft">
-            
-            <h1 class="mainPageHeader">Erstelle Deinen Lebenslauf in Minuten!</h1>
-            <h3 class="subtext">Mit unserem benutzerfreundlichen Tool kannst du schnell und einfach einen professionellen Lebenslauf
-                erstellen.
-                Wähle aus verschiedenen Vorlagen und passe sie individuell an.</h3>
+    <div id="customConfirm" class="modal" onclick="confirmAction(false)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <p>Bist du sicher, dass du zurück zur Startseite möchtest?</p>
+            <button class="confirm-btn" onclick="confirmAction(true)">Ja</button>
+            <button class="cancel-btn" onclick="confirmAction(false)">Nein</button>
+        </div>
+    </div>
 
-            <div class="btnSection">
-                <img class="designElement" src="/img/design_element.png" >
-                <button class="blueButton" onclick="startProgress()">Erstelle deinen Lebenslauf</button>
-            </div>
-        </div>
-        <div class="mainPageRight">
-            <div class="imgContainer">
-                <img class="CVexample" src="/img/CV_vorlage.jpg">
-                <img class="colorpicker" src="/img/color_picker.png">
-            </div>
-        </div>
+
+    <div class="mainPage">
+
+    </div>
 
 
     </div>
