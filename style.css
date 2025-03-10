@@ -1,0 +1,398 @@
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    font-family: 'Lato', sans-serif; 
+}
+
+
+.navBar{ 
+    display: flex;               
+    justify-content: space-between;    
+    align-items: center;         
+    padding: 10px; 
+    padding-left: 0px;
+    box-shadow: 10px 10px 20px rgba(0, 0, 0, 0.08);
+    padding-left: 90px;
+    padding-right:90px ;
+    font-weight: 600;
+} 
+
+.navBarItems{ 
+    display: flex;                
+    gap: 20px;                    
+    list-style-type: none;        
+    margin: 0;                    
+    padding: 0; 
+}
+
+a{ 
+ text-decoration: none;
+ cursor: pointer;
+ color: #000;
+
+ 
+}
+
+a:hover{ 
+    cursor: pointer;
+    color: rgb(0, 24, 161);
+   
+} 
+
+.logo{ 
+    height: 80px;
+    width: 150px;
+}
+
+.logo:hover{ 
+    cursor: pointer;
+}
+
+.mainPage{ 
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    background-color: rgb(238,243,253);
+    margin-top: 80px;
+    margin-left: 90px;
+    margin-right: 90px;
+    border-radius: 10px;
+    align-items: center;
+    padding-top: 20px;
+    padding-bottom: 60px;
+    box-shadow: 10px 10px 20px rgb(0, 0, 0, 0.2);
+    justify-content: space-around;
+    text-align: center;
+
+}
+.mainPageHeader{ 
+    margin-bottom: 0px;
+    width: 333px;
+}
+
+.subtext{ 
+    color: rgb(106, 106, 106);
+    width: 500px;
+}
+
+.mainPageLeft{ 
+    display: flex;
+    max-width: 60vw;
+    flex-direction: column;
+    margin-left: 60px;
+}
+
+.mainPageRight{ 
+    position: relative;  
+    display: flex;
+    max-width: 60vw;
+    flex-direction: column;
+    margin-left: 60px;
+}
+.CVexample{ 
+    margin-top: 15px;
+    margin-right: 80px;
+    height: 400px;
+    rotate: -5deg;
+    margin-left: 110px;
+    box-shadow: 0 0 10px rgb(0, 0, 0, 0.3);
+}
+
+.imgContainer{ 
+    position: relative;
+   
+    
+}
+
+.colorpicker{ 
+    position: absolute; /* Positioniere das Bild relativ zum Container */
+    top: 101%; 
+    left: 44%; /* 50% des Containers von links */
+    transform: translate(-50%, -50%); /* Zentriert das Bild exakt */
+    width: 200px; /* Setze eine feste Größe für das Overlay-Bild */
+    z-index: 10; 
+    box-shadow: 10px 10px 20px rgb(0, 0, 0, 0.2);
+    rotate: 7deg;
+}
+
+.imgContainer{
+    display: flex;
+    position: relative;
+}
+
+.designElement{
+    height: 75px;
+    margin-left: -50px;
+    margin-top: 30px;
+    rotate: -15deg;
+    margin-right: 10px;
+}
+
+.blueButton{ 
+    position: relative;
+    top: -50px;
+    margin-left: 20px;
+    background-color: #007bff;
+    color: #ffffff; 
+    border: 2px solid #007bff; 
+    padding: 12px 24px; 
+    font-size: 16px; 
+    font-family: 'Arial', sans-serif; 
+    border-radius: 5px; 
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 10px rgba(0, 123, 255, 0.3);
+    transition: transform .2s;
+  
+}
+   
+.blueButton:hover{
+    cursor: pointer;
+    color: rgb(236, 236, 236);  
+    transform: scale(1.05); 
+}
+
+.modal {
+    display: none; /* Standardmäßig versteckt */
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Dunkler Hintergrund */
+    justify-content: center;
+    align-items: center;
+}
+
+/* Dialog-Inhalt */
+.modal-content {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+    width: 300px;
+}
+
+/* Bestätigen-Button */
+.confirm-btn {
+    background-color: #007bff; /* Grünes Design */
+    color: white;
+    padding: 10px 20px;
+    border: 2px solid #007bff;
+    box-shadow: 0 0 10px rgba(0, 123, 255, 0.3);
+    cursor: pointer;
+    border-radius: 5px;
+    margin: 10px;
+    font-size: 16px;
+}
+
+.confirm-btn:hover {
+    background-color: #0069d9;
+    cursor: pointer;
+}
+
+/* Abbrechen-Button */
+.cancel-btn {
+    background-color: #dc3545; /* Rotes Design */
+    box-shadow: 0 0 10px rgba(209, 1, 1, 0.3);
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    margin: 10px;
+    font-size: 16px;
+}
+
+.cancel-btn:hover {
+    background-color: #c82333;
+}
+
+
+@keyframes shadowFlicker {
+    0% {
+        box-shadow: 0 0 10px rgba(0, 123, 255, 0.3); /* Anfangsschattierung */
+    }
+    50% {
+        box-shadow: 0 0 25px rgba(0, 123, 255, 0.95); /* Hellblauer Schatten */
+    }
+    100% {
+        box-shadow: 0 0 10px rgba(0, 123, 255, 0.3); /* Zurück zur normalen Schattierung */
+    }
+}
+
+/* Schatten-Animation */
+.blueButton {
+    animation: shadowFlicker 2s infinite; /* 3 Sekunden Animation, die unendlich wiederholt wird */
+}
+
+.progress-container{ 
+    width: 80%;
+    box-shadow: 0px 0px 10px  rgba(0, 0, 0, 0.05);   
+}
+
+
+
+.btnSection2{ 
+    display: flex;
+}
+
+.mainPage2{ 
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background-color: rgb(238,243,253);
+    margin-top: 80px;
+    margin-left: 90px;
+    margin-right: 90px;
+    border-radius: 10px;
+    align-items: center;
+    padding-top: 20px;
+    padding-bottom: 60px;
+    box-shadow: 10px 10px 20px rgb(0, 0, 0, 0.2);
+    justify-content: space-around;
+    text-align: center;
+}
+
+.blueButton2{ 
+    margin-top: 100px;
+    margin-left: 20px;
+    background-color: #007bff;
+    color: #ffffff; 
+    border: 2px solid #007bff; 
+    padding: 6px 12px; 
+    font-size: 16px; 
+    font-family: 'Arial', sans-serif; 
+    border-radius: 5px; 
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 10px rgba(0, 123, 255, 0.3);
+ 
+}
+
+.backButton{ 
+    margin-top: 100px;
+    margin-left: 20px;
+    background-color: #ffffff;
+    color: #222222; 
+    border: 2px solid #4a4a4a0c; 
+    padding: 6px 12px; 
+    font-size: 16px; 
+    font-family: 'Arial', sans-serif; 
+    border-radius: 5px; 
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 10px rgba(41, 41, 41, 0.159);
+   
+}
+
+.blueButton2:hover{ 
+    cursor: pointer;
+    background-color: #0069d9;
+    border: 2px solid #0069d9; 
+}
+
+.backButton:hover{ 
+    cursor: pointer;
+    background-color: #f3f3f3;
+    border: 2px solid #f3f3f3; 
+}
+
+.uploadImg{ 
+    display: flex;
+    flex-direction: row;
+    margin-top: 40px;
+}
+
+.image-preview {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    border: 2px solid #ccc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    background-color: #f4f4f4;
+}
+
+.image-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+#imageUpload {
+    display: none;
+}
+
+.inputSection{ 
+    display: flex;
+    justify-content: flex-start;
+}
+
+.formContainer {
+    width: 80%;
+    max-width: 600px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.formGroup {
+    margin-bottom: 15px;
+}
+
+.formGroup label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+}
+
+.formGroup input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+/* Preview Styles */
+.previewContainer {
+    width: 80%;
+    max-width: 800px;
+    margin: 20px auto;
+    border: 1px solid #ddd;
+    box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+    height: 500px;
+    overflow-y: auto;
+    background-color: white;
+}
+
+.resumeTemplate {
+    padding: 30px;
+    min-height: 100%;
+}
+
+.resumeSection {
+    margin-bottom: 20px;
+}
+
+.downloadButton {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 0 10px;
+}
+
+.downloadButton:hover {
+    background-color: #45a049;
+}

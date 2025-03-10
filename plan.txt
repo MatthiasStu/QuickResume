@@ -1,0 +1,73 @@
+1. Projektplanung & Setup
+ Technologie-Stack festlegen
+
+Frontend: HTML, CSS, JavaScript
+PDF-Generierung: jsPDF oder html2pdf
+Optional: React oder Vue.js für bessere UI/State-Management
+ Projekt-Setup & Struktur definieren
+
+Ordnerstruktur erstellen (/assets, /scripts, /styles, /templates)
+Basis-HTML, CSS & JS-Dateien anlegen
+2. UI-Design & Benutzerführung
+ Startseite / Einführung
+
+Kurze Erklärung, was das Tool macht
+"Start"-Button zur Eingabe
+ Eingabeformular für CV-Daten
+
+Persönliche Daten (Name, Adresse, Telefonnummer, E-Mail)
+Berufserfahrung (Firmenname, Position, Zeitraum, Beschreibung)
+Bildung (Schule/Uni, Abschluss, Jahr)
+Fähigkeiten & Sprachen (z. B. Balkendiagramme für Level)
+Zusätzliche Abschnitte (z. B. Projekte, Zertifikate, Hobbys)
+ Live-Vorschau Bereich
+
+Aktualisierung der Vorschau während der Eingabe
+ Vorlagen-Auswahlseite
+
+Mehrere Design-Templates für den CV (z. B. modern, klassisch, kreativ)
+Thumbnails zur Vorschau
+ PDF-Editor & Anpassungsmöglichkeiten
+
+Schriftart & Größe ändern
+Farben anpassen
+Reihenfolge der Abschnitte ändern
+Option zum Hochladen eines Profilbilds
+3. Implementierung der Eingabe & Speicherung der Daten
+ Formular erstellen & Validierung
+
+Pflichtfelder prüfen
+Echtzeit-Fehlermeldungen anzeigen
+ Daten in LocalStorage speichern (damit sie nicht verloren gehen)
+
+Beim Neuladen der Seite Daten wiederherstellen
+ Datenstruktur definieren (JSON-Format)
+
+json
+Kopieren
+Bearbeiten
+{
+  "name": "Max Mustermann",
+  "email": "max@email.com",
+  "experience": [
+    { "company": "Firma A", "position": "Entwickler", "years": "2020-2023" }
+  ],
+  "education": [
+    { "school": "Universität XY", "degree": "Bachelor", "year": "2019" }
+  ]
+}
+4. Live-Vorschau & Templates implementieren
+ CV-Daten in HTML-Template einfügen
+
+Dynamische Darstellung mit JavaScript
+ Mehrere Vorlagen bereitstellen
+
+Unterschiedliche Designs mit CSS umsetzen
+5. PDF-Generierung
+ jsPDF oder html2pdf einbinden
+ CV als PDF exportieren
+ Download-Button hinzufügen
+6. Tests & Verbesserungen
+ Browser-Kompatibilität testen
+ Performance optimieren
+ Fehlermeldungen & UX verbessern

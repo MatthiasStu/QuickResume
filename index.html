@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link
+            href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+            rel="stylesheet">
+        <link rel="stylesheet" href="style.css">
+        <script src="script.js"></script>
+        <title>QuickResume</title>
+    </head>
+
+<body>
+    <div class="navBar">
+        <img src="img/logo.png" class="logo" onclick="navigateToLandingPage()">
+        <ul class="navBarItems">
+            <li onclick="navigateToLandingPage()"><a>Home</a></li>
+            <li><a href="#templates">Templates</a></li>
+            <li><a href="#start">Start</a></li>
+            <li><a href="#help">Help</a></li>
+        </ul>
+    </div>
+
+    <div class="mainPage">
+        <div class="mainPageLeft">
+            
+            <h1 class="mainPageHeader">Erstelle Deinen Lebenslauf in Minuten!</h1>
+            <h3 class="subtext">Mit unserem benutzerfreundlichen Tool kannst du schnell und einfach einen professionellen Lebenslauf
+                erstellen.
+                Wähle aus verschiedenen Vorlagen und passe sie individuell an.</h3>
+
+            <div class="btnSection">
+                <img class="designElement" src="/img/design_element.png" >
+                <button class="blueButton" onclick="startProgress()">Erstelle deinen Lebenslauf</button>
+            </div>
+        </div>
+        <div class="mainPageRight">
+            <div class="imgContainer">
+                <img class="CVexample" src="/img/CV_vorlage.jpg">
+                <img class="colorpicker" src="/img/color_picker.png">
+            </div>
+        </div>
+
+
+    </div>
+</body>
+
+</html>
