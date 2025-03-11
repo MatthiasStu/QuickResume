@@ -1,65 +1,62 @@
+let progress= 25; 
+
+
+/**
+ * QuickResume - JavaScript Funktionen
+ * 
+ * Diese Datei enthält alle JavaScript-Funktionen für die QuickResume-Anwendung.
+ */
+
+// ========== NAVIGATION UND UI-STEUERUNG ==========
+
+/**
+ * Navigiert zur Eingabeseite
+ */
 function startProgress() {
     window.location.href = "inputpage.html";
 }
 
-function navigateToLandingPage() {
+/**
+ * Verwaltet die Navigation zur Landingpage
+ */
+function navigateToLandingPage(  ) {
     const currentPage = window.location.pathname;
 
     if (currentPage === "/index.html") {
         window.location.href = "/index.html";
     } else if (currentPage === "/inputpage.html") {
-        document.getElementById("customConfirm").style.display = "flex"; // Popup anzeigen
+        document.getElementById("customConfirm").style.display = "flex";
     }
 }
 
-
+/**
+ * Verarbeitet die Antwort auf den Bestätigungsdialog
+ */
 function confirmAction(isConfirmed) {
     document.getElementById("customConfirm").style.display = "none"; 
 
     if (isConfirmed) {
-        window.location.href = "/index.html"; // Weiterleitung
+        window.location.href = "/index.html";
     }
 }
 
-
-function nextStep(percent){ 
-
-updateProgressbar(percent); 
-}
-
-function updateProgressbar(percent){ 
-    let progressbar = document.getElementById("progressbar")
-    progressbar.style.width = percent + "%"; 
-    progressbar.textContent = percent + "%";
-}
-
-function saveDataAndContinue() {
-    // Get form data
-    const firstName = document.getElementById("firstName").value;
-    const lastName = document.getElementById("lastName").value;
-    
-    // Validate form data
-    if (!firstName || !lastName) {
-        alert("Bitte fülle alle Felder aus.");
-        return;
+/**
+ * Aktualisiert die Fortschrittsanzeige
+ */
+function updateProgressbar(percent) { 
+    let progressbar = document.getElementById("progressbar");
+    if (progressbar) {
+        progressbar.style.width = percent + "%"; 
+        progressbar.textContent = percent + "%";
     }
-    
-    // Save data to local storage
-    const userData = {
-        firstName: firstName,
-        lastName: lastName
-    };
-    
-    localStorage.setItem("resumeData", JSON.stringify(userData));
-    
-    // Update progress and navigate to preview page
-    updateProgressbar(50);
-    window.location.href = "preview.html";
 }
 
-// Function to generate PDF (to be used in preview.html)
+// ========== PDF-GENERIERUNG ==========
+
+/**
+ * Generiert eine PDF-Datei aus dem Lebenslauf-Vorschaubereich
+ */
 function generatePDF() {
-    // Get resume container
     const element = document.getElementById("resumePreview");
     
     if (!element) {
@@ -67,44 +64,25 @@ function generatePDF() {
         return;
     }
     
-    // Create a clone of the element to avoid modifying the original
+    // Element klonen, um das Original nicht zu verändern
     const elementClone = element.cloneNode(true);
     
-    // Apply specific styles to ensure visibility in the PDF
-    elementClone.style.width = "210mm"; // A4 width
-    elementClone.style.height = "auto";
-    elementClone.style.padding = "20mm";
+    // Spezifische Stile für optimale PDF-Darstellung anwenden
+    elementClone.style.width = "210mm";
+    elementClone.style.height = "auto"; 
+    elementClone.style.padding = "15mm";
     elementClone.style.backgroundColor = "white";
     elementClone.style.color = "black";
+    elementClone.style.textAlign = "left";  // Linksbündige Ausrichtung sicherstellen
     
-    // Create a temporary container for the clone
+    // Temporären Container erstellen
     const tempContainer = document.createElement("div");
     tempContainer.style.position = "absolute";
     tempContainer.style.left = "-9999px";
     tempContainer.appendChild(elementClone);
     document.body.appendChild(tempContainer);
     
-    // Options for html2pdf
-    const opt = {
-        margin: 10,
-        filename: 'resume.pdf',
-        image: { type: 'jpeg', quality: 1 },
-        html2canvas: { 
-            scale: 2,
-            useCORS: true,
-            logging: true,
-            letterRendering: true,
-            allowTaint: false
-        },
-        jsPDF: { 
-            unit: 'mm', 
-            format: 'a4', 
-            orientation: 'portrait',
-            compress: false
-        }
-    };
-    
-    // Show a loading indicator
+    // Lade-Indikator anzeigen
     const loadingIndicator = document.createElement("div");
     loadingIndicator.textContent = "PDF wird erstellt...";
     loadingIndicator.style.position = "fixed";
@@ -118,49 +96,172 @@ function generatePDF() {
     loadingIndicator.style.zIndex = "9999";
     document.body.appendChild(loadingIndicator);
     
-    // Generate the PDF with a promise chain
+    // HTML2PDF Optionen
+    const opt = {
+        margin: [10, 10, 15, 10],
+        filename: 'resume.pdf',
+        image: { type: 'jpeg', quality: 1 },
+        html2canvas: { 
+            scale: 2,
+            useCORS: true,
+            logging: true,
+            letterRendering: true,
+            allowTaint: false,
+            scrollY: 0,
+            windowWidth: document.documentElement.offsetWidth,
+            windowHeight: document.documentElement.offsetHeight
+        },
+        jsPDF: { 
+            unit: 'mm', 
+            format: 'a4', 
+            orientation: 'portrait',
+            compress: false,
+            putOnlyUsedFonts: true
+        },
+        pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+    };
+    
+    // PDF generieren
     html2pdf()
         .set(opt)
         .from(elementClone)
         .save()
         .then(() => {
-            // Clean up
             document.body.removeChild(tempContainer);
             document.body.removeChild(loadingIndicator);
         })
         .catch(error => {
-            console.error("PDF generation error:", error);
+            console.error("Fehler bei der PDF-Generierung:", error);
             document.body.removeChild(tempContainer);
             document.body.removeChild(loadingIndicator);
-            alert("Bei der Erstellung der PDF ist ein Fehler aufgetreten. Bitte versuche es erneut.");
+            alert("Bei der Erstellung der PDF ist ein Fehler aufgetreten.");
         });
 }
 
-
-
+/**
+ * Lädt die gespeicherten Daten in die Vorschauseite
+ */
 function loadPreview() {
-    console.log("loadPreview function called");
+    console.log("Vorschau wird geladen...");
     
-    // Daten aus dem LocalStorage laden
+    // Daten aus dem localStorage laden
     const resumeDataString = localStorage.getItem("resumeData");
-    console.log("Data from localStorage:", resumeDataString);
     
     if (!resumeDataString) {
-        console.warn("No data found in localStorage, redirecting to input page");
+        console.warn("Keine gespeicherten Daten gefunden, Umleitung zur Eingabeseite");
         window.location.href = "inputpage.html";
         return;
     }
     
     const resumeData = JSON.parse(resumeDataString);
-    console.log("Parsed data:", resumeData);
     
-    // Fülle die Preview-Seite mit den geladenen Daten
-    document.getElementById("previewFirstName").textContent = resumeData.firstName;
-    document.getElementById("previewLastName").textContent = resumeData.lastName;
+    // Vorschauseite mit den geladenen Daten füllen
+    document.getElementById("previewFirstName").textContent = resumeData.firstName || '';
+    document.getElementById("previewLastName").textContent = resumeData.lastName || '';
     
-    // Übertrage die Daten in die zweite Section
-    document.getElementById("previewFirstName2").textContent = resumeData.firstName;
-    document.getElementById("previewLastName2").textContent = resumeData.lastName;
+    // Daten in die zweite Section übertragen
+    document.getElementById("previewFirstName2").textContent = resumeData.firstName || '';
+    document.getElementById("previewLastName2").textContent = resumeData.lastName || '';
     
-    console.log("Preview data loaded successfully");
+    // Telefonnummer anzeigen, falls vorhanden
+    if (document.getElementById("previewPhone")) {
+        document.getElementById("previewPhone").textContent = resumeData.phone || '';
+    }
+    
+    if (document.getElementById("previewMail")) {
+        document.getElementById("previewMail").textContent = resumeData.mail || '';
+    }
+    console.log("Vorschaudaten erfolgreich geladen");
+}
+
+// ========== SEITEN-INITIALISIERUNG ==========
+
+// Event-Listener beim Laden der Seite
+window.addEventListener('DOMContentLoaded', function() {
+  // Prüfe, ob wir auf der Eingabeseite sind
+  if (document.getElementById('userForm')) {
+    // FormController initialisieren
+    const formCtrl = new FormController('userForm');
+    
+    // Fehler-Container setzen
+    formCtrl.setErrorContainer('errorMessage');
+    
+    // Felder hinzufügen mit Validierungsregeln
+    formCtrl.addField('firstName', { 
+        required: true,
+        errorMessage: 'Bitte gib deinen Vornamen ein.'
+    });
+    
+    formCtrl.addField('lastName', { 
+        required: true,
+        errorMessage: 'Bitte gib deinen Nachnamen ein.'
+    });
+    
+    formCtrl.addField('phone', { 
+        required: true,
+        pattern: /^[0-9]{6,}$/,
+        errorMessage: 'Bitte gib eine gültige Telefonnummer ein (nur Zahlen, mindestens 6 Ziffern).',
+        liveValidate: true // Live-Validierung während der Eingabe
+    });
+
+        formCtrl.addField('mail', { 
+            required: true,
+            pattern: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+            errorMessage: 'Bitte gib eine gültige E-Mail-Adresse ein.',
+            liveValidate: true
+        });
+        
+        const referrer = document.referrer;
+        const isComingFromLandingPage = referrer.includes('index.html');
+        
+        // Vorhandene Daten laden
+        const savedData = localStorage.getItem('resumeData');
+        
+        if (isComingFromLandingPage) {
+            // Wenn von der Landingpage kommend, Formular leeren
+            localStorage.removeItem('resumeData');
+            formCtrl.fillWithData({
+                firstName: '',
+                lastName: '',
+                phone: ''
+            });
+        } else if (savedData) {
+            // Von anderen Seiten (z.B. Vorschau): Daten laden
+            formCtrl.fillWithData(JSON.parse(savedData));
+        }
+        
+        // Formular-Button einrichten
+        document.getElementById('nextButton').addEventListener('click', function() {
+            formCtrl.submit(function(data) {
+                // Daten speichern
+                localStorage.setItem('resumeData', JSON.stringify(data));
+                
+                // Fortschritt aktualisieren
+                progress += 25; 
+                updateProgressbar(progress); 
+                console.log(progress)
+                
+              if(progress == 100){
+                 window.location.href = 'preview.html';
+                }else if(progress == 50){ 
+                    openEducationInput()
+                }else if(progress == 75){ 
+                    openResumeInput()
+                }
+            });
+        });
+    }
+    
+    // Prüfe, ob wir auf der Vorschauseite sind
+    if (document.getElementById('resumePreview')) {
+        loadPreview();
+    }
+});
+
+function openEducationInput(){ 
+    document.getElementById('formContainer').innerHTML = ``;
+}
+
+function openResumeInput(){ 
+    document.getElementById('formContainer').innerHTML = ``;
 }

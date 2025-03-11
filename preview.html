@@ -10,6 +10,7 @@
         href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="resume.css">
     <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
     <!-- Include html2pdf library -->
     <!-- Add this before your script.js -->
@@ -40,25 +41,24 @@
     </div>
 
     <div class="mainPage2">
-        <div class="w3-light-grey w3-round-xlarge progress-container">
-            <div id="progressbar" class="w3-container w3-blue w3-round-xlarge" style="width:50%">50%</div>
-        </div>
-
+    
         <h2>Lebenslauf Vorschau</h2>
 
         <div class="previewContainer">
-            <div id="resumePreview" class="resumeTemplate" style="width: 210mm; background-color: white; color: black; padding: 20px;">
+            <div id="resumePreview" class="resumeTemplate">
                 <h1><span id="previewFirstName"></span> <span id="previewLastName"></span></h1>
                 <div class="resumeSection">
                     <h2>Persönliche Informationen</h2>
                     <p>Vorname: <span id="previewFirstName2"></span></p>
                     <p>Nachname: <span id="previewLastName2"></span></p>
+                    <p>Telefon: <span id="previewPhone"></span></p>
+                    <p>E-Mail: <span id="previewMail"></span></p>
                 </div>
                 <!-- Add some more content to ensure it's not too small -->
                 <div class="resumeSection">
                     <h2>Kontakt</h2>
-                    <p>Email: example@example.com</p>
-                    <p>Telefon: +49 123 456789</p>
+                    
+                 
                 </div>
             </div>
         </div>
