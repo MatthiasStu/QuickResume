@@ -1,48 +1,107 @@
-/* Main resume container */
+/* Lebenslauf-Styling für Vorschau und PDF */
 .resumeTemplate {
-    font-family: 'Poppins', sans-serif;
+    font-family: 'Lato', Arial, sans-serif;
     color: #333;
     line-height: 1.5;
-    padding: 25px;
+    padding: 30px;
     background-color: white;
+    text-align: left;
 }
 
-/* Header styling */
-.resumeTemplate h1 {
-    color: #2c3e50;
+/* Header-Bereich mit Name */
+.resumeHeader {
+    margin-bottom: 25px;
+    padding-bottom: 15px;
     border-bottom: 2px solid #3498db;
-    padding-bottom: 10px;
-    margin-bottom: 20px;
-    font-size: 28px;
 }
 
-/* Section styling */
+.resumeHeader h1 {
+    font-size: 28px;
+    margin: 0 0 10px 0;
+    color: #2c3e50;
+}
+
+.contactInfo {
+    font-size: 14px;
+    color: #555;
+}
+
+.contactItem {
+    margin-right: 15px;
+    white-space: nowrap;
+}
+
+/* Sektionen des Lebenslaufs */
 .resumeSection {
     margin-bottom: 25px;
 }
 
 .resumeSection h2 {
-    color: #3498db;
     font-size: 20px;
-    margin-bottom: 15px;
-    border-bottom: 1px solid #eee;
+    color: #3498db;
+    margin: 0 0 15px 0;
     padding-bottom: 5px;
+    border-bottom: 1px solid #eee;
+    
 }
 
-/* Contact information styling */
-.resumeSection p {
-    margin: 8px 0;
-    line-height: 1.6;
+/* Einzelne Einträge (z.B. Job, Ausbildung) */
+.resumeItem {
+    margin-bottom: 15px;
 }
 
-/* Additional styling for specific elements */
-#previewFirstName, #previewLastName {
-    font-weight: 600;
+.resumeItemHeader {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 5px;
 }
 
-/* Style for contact section */
-.resumeSection:nth-child(2) h2 {
-    background-color: #f8f9fa;
-    padding: 5px 8px;
-    border-radius: 4px;
+.resumeItemTitle {
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.resumeItemPeriod {
+    font-style: italic;
+    color: #666;
+}
+
+.resumeItemSubtitle {
+    font-size: 15px;
+    color: #3498db;
+    margin-bottom: 5px;
+}
+
+.resumeItemDescription {
+    font-size: 14px;
+    line-height: 1.4;
+    margin-top: 8px;
+}
+
+/* Leere Sektionen ausblenden */
+.empty-section {
+    display: none;
+}
+
+/* Basisinformationen */
+.infoRow {
+    margin-bottom: 5px;
+}
+
+.infoLabel {
+    font-weight: bold;
+    margin-right: 5px;
+}
+
+.infoValue {
+    display: inline;
+}
+
+@media print {
+    .resumeTemplate {
+        width: 100%;
+        max-width: 210mm;
+        margin: 0 auto;
+        padding: 20mm;
+    }
 }

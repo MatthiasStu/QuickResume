@@ -17,15 +17,17 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"
         integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="form-controller.js"></script>
+    <script src="form-templates.js"></script>
     <script src="script.js"></script>
     <title>QuickResume - Preview</title>
 </head>
 
 <body onload="loadPreview()">
     <div class="navBar">
-        <img src="img/logo.png" class="logo" onclick="navigateToLandingPage()">
+        <img src="img/logo.png" class="logo" onclick="navigateToLandingPage(true)">
         <ul class="navBarItems">
-            <li><a href="#home" onclick="navigateToLandingPage()">Home</a></li>
+            <li><a href="#home" onclick="navigateToLandingPage(true)">Home</a></li>
             <li><a href="#templates">Templates</a></li>
             <li><a href="#start">Start</a></li>
             <li><a href="#help">Help</a></li>
@@ -41,30 +43,51 @@
     </div>
 
     <div class="mainPage2">
-    
+
         <h2>Lebenslauf Vorschau</h2>
 
         <div class="previewContainer">
             <div id="resumePreview" class="resumeTemplate">
-                <h1><span id="previewFirstName"></span> <span id="previewLastName"></span></h1>
-                <div class="resumeSection">
-                    <h2>Persönliche Informationen</h2>
-                    <p>Vorname: <span id="previewFirstName2"></span></p>
-                    <p>Nachname: <span id="previewLastName2"></span></p>
-                    <p>Telefon: <span id="previewPhone"></span></p>
-                    <p>E-Mail: <span id="previewMail"></span></p>
+                <div class="resumeHeader">
+                    <div class="header-text">
+                        <h1><span id="previewFirstName"></span> <span id="previewLastName"></span></h1>
+                        <div class="contactInfo">
+                            <span class="contactItem" id="contactPhone">Tel: <span id="previewPhone"></span></span>
+                            <span class="contactItem" id="contactEmail">E-Mail: <span id="previewMail"></span></span>
+                        </div>
+                    </div>
+                    <div class="header-image" id="previewProfileImage">
+                    </div>
                 </div>
-                <!-- Add some more content to ensure it's not too small -->
-                <div class="resumeSection">
-                    <h2>Kontakt</h2>
-                    
-                 
+                
+                <div id="educationSection" class="resumeSection">
+                    <h2>Bildung</h2>
+                    <div class="resumeItem">
+                        <div class="resumeItemHeader">
+                            <span class="resumeItemTitle" id="previewDegree">Abschluss</span>
+                            <span class="resumeItemPeriod" id="previewGraduationYear"></span>
+                        </div>
+                        <div class="resumeItemSubtitle" id="previewSchool"></div>
+                    </div>
+                </div>
+                
+                <div id="experienceSection" class="resumeSection">
+                    <h2>Berufserfahrung</h2>
+                    <div class="resumeItem">
+                        <div class="resumeItemHeader">
+                            <span class="resumeItemTitle" id="previewPosition">Position</span>
+                            <span class="resumeItemPeriod" id="previewWorkPeriod"></span>
+                        </div>
+                        <div class="resumeItemSubtitle" id="previewCompany"></div>
+                        <div class="resumeItemDescription" id="previewDescription"></div>
+                    </div>
                 </div>
             </div>
         </div>
+     
 
         <div class="btnSection2">
-            <button class="backButton" onclick="window.location.href='inputpage.html'">Zurück</button>
+            <button class="backButton" onclick="navigateBackFromPreview()">Zurück</button>
             <button class="downloadButton" onclick="generatePDF()">PDF Herunterladen</button>
             <button class="blueButton2" onclick="nextStep(75); window.location.href='finalpage.html'">Weiter</button>
         </div>

@@ -11,6 +11,7 @@
     <!-- Add this before your script.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="form-controller.js"></script>
+    <script src="form-templates.js"></script>
     <script src="script.js"></script>
     <title>QuickResume</title>
 </head>
@@ -19,7 +20,7 @@
     <div class="navBar">
         <img src="img/logo.png" class="logo" onclick="navigateToLandingPage()">
         <ul class="navBarItems">
-            <li><a href="#home" onclick="navigateToLandingPage()">Home</a></li>
+            <li><a href="#home" onclick="navigateToLandingPage(true)">Home</a></li>
             <li><a href="#templates">Templates</a></li>
             <li><a href="#start">Start</a></li>
             <li><a href="#help">Help</a></li>

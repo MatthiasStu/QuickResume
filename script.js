@@ -1,11 +1,11 @@
-let progress= 25; 
-
-
 /**
  * QuickResume - JavaScript Funktionen
  * 
  * Diese Datei enthält alle JavaScript-Funktionen für die QuickResume-Anwendung.
  */
+
+// Globale Variablen
+let progress = 25; // Standardwert für den Startfortschritt
 
 // ========== NAVIGATION UND UI-STEUERUNG ==========
 
@@ -13,35 +13,71 @@ let progress= 25;
  * Navigiert zur Eingabeseite
  */
 function startProgress() {
+    // Setze Fortschritt zurück
+    progress = 25;
+    localStorage.setItem('formProgress', progress);
     window.location.href = "inputpage.html";
 }
 
 /**
- * Verwaltet die Navigation zur Landingpage
+ * Verwaltet die Navigation je nach aktuellem Fortschritt
  */
-function navigateToLandingPage(  ) {
+function navigateToLandingPage(isNavbar = false) {
     const currentPage = window.location.pathname;
 
     if (currentPage === "/index.html") {
+        // Already on landing page
         window.location.href = "/index.html";
-    } else if (currentPage === "/inputpage.html") {
-        document.getElementById("customConfirm").style.display = "flex";
+    } else if (currentPage === "/inputpage.html" || currentPage === "/preview.html") {
+        // Check current progress and navigation method
+        if (progress === 25 || isNavbar === true) {
+            // Always show confirmation for navbar/logo or when at initial progress
+            document.getElementById("customConfirm").style.display = "flex";
+        } else if (progress === 50) {
+            // At 50% go back to first form
+            updateProgress(25);
+            openPersonalInfoInput();
+        } else if (progress === 75) {
+            // At 75% go back to second form
+            updateProgress(50);
+            openEducationInput();
+        } else if (progress === 100) {
+            // At 100% go back to third form
+            updateProgress(75);
+            openResumeInput();
+        }
     }
 }
 
 /**
  * Verarbeitet die Antwort auf den Bestätigungsdialog
+ * 
+ * @param {boolean} isConfirmed - Gibt an, ob der Benutzer bestätigt hat
  */
 function confirmAction(isConfirmed) {
     document.getElementById("customConfirm").style.display = "none"; 
 
     if (isConfirmed) {
+        // Weiterleitung zur Startseite bei Bestätigung
         window.location.href = "/index.html";
     }
 }
 
 /**
+ * Aktualisiert den Fortschritt und speichert ihn im localStorage
+ * 
+ * @param {number} newProgress - Neuer Fortschrittswert 
+ */
+function updateProgress(newProgress) {
+    progress = newProgress;
+    updateProgressbar(progress);
+    localStorage.setItem('formProgress', progress);
+}
+
+/**
  * Aktualisiert die Fortschrittsanzeige
+ * 
+ * @param {number} percent - Prozentsatz des Fortschritts (0-100)
  */
 function updateProgressbar(percent) { 
     let progressbar = document.getElementById("progressbar");
@@ -51,36 +87,111 @@ function updateProgressbar(percent) {
     }
 }
 
+// ========== FORMULAR-FUNKTIONEN ==========
+
+/**
+ * Öffnet das Formular für persönliche Informationen (Fortschritt 25%)
+ */
+
+/**
+ * Initialisiert den FormController mit den aktuell angezeigten Formularfeldern
+ */
+function initializeFormController() {
+    // FormController initialisieren
+    const formCtrl = new FormController('userForm');
+    
+    // Fehler-Container setzen
+    formCtrl.setErrorContainer('errorMessage');
+    
+    // Vorhandene Felder im DOM finden und dem Controller hinzufügen
+    const inputs = document.querySelectorAll('#userForm input, #userForm textarea');
+    
+    inputs.forEach(input => {
+        const fieldId = input.id;
+        let validationRules = { required: true };
+        
+        // Spezifische Validierungsregeln basierend auf Feldtyp hinzufügen
+        if (fieldId === 'phone') {
+            validationRules.pattern = /^[0-9]{6,}$/;
+            validationRules.errorMessage = 'Bitte gib eine gültige Telefonnummer ein (nur Zahlen, mindestens 6 Ziffern).';
+            validationRules.liveValidate = true;
+        } else if (fieldId === 'mail') {
+            validationRules.pattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+            validationRules.errorMessage = 'Bitte gib eine gültige E-Mail-Adresse ein.';
+            validationRules.liveValidate = true;
+        } else if (fieldId === 'graduationYear') {
+            validationRules.pattern = /^(19|20)\d{2}$/;
+            validationRules.errorMessage = 'Bitte gib ein gültiges Jahr ein (z.B. 2020).';
+            validationRules.liveValidate = true;
+        }
+        
+        formCtrl.addField(fieldId, validationRules);
+    });
+    
+    // Vorhandene Daten laden und in die richtigen Felder einfüllen
+    const savedData = localStorage.getItem('resumeData');
+    if (savedData) {
+        formCtrl.fillWithData(JSON.parse(savedData));
+    }
+    // Formular-Button neu einrichten
+    setupFormButton(formCtrl);
+}
+
+/**
+ * Richtet den Weiter-Button für das aktuelle Formular ein
+ */
+function setupFormButton(formCtrl) {
+    const nextButton = document.getElementById('nextButton');
+    
+    if (nextButton) {
+        // Alle alten Event-Listener entfernen
+        const newButton = nextButton.cloneNode(true);
+        nextButton.parentNode.replaceChild(newButton, nextButton);
+        
+        // Neuen Event-Listener hinzufügen
+        newButton.addEventListener('click', function() {
+            formCtrl.submit(function(data) {
+                // Bestehende Daten laden und mit neuen Daten zusammenführen
+                const existingData = localStorage.getItem('resumeData') ? 
+                    JSON.parse(localStorage.getItem('resumeData')) : {};
+                const updatedData = {...existingData, ...data};
+                
+                // Aktualisierte Daten speichern
+                localStorage.setItem('resumeData', JSON.stringify(updatedData));
+                
+                // Fortschritt aktualisieren und zum nächsten Schritt gehen
+                if (progress === 25) {
+                    updateProgress(50);
+                    openEducationInput();
+                } else if (progress === 50) {
+                    updateProgress(75);
+                    openResumeInput();
+                } else if (progress === 75) {
+                    updateProgress(100);
+                    window.location.href = 'preview.html';
+                }
+            });
+        });
+    }
+}
+
 // ========== PDF-GENERIERUNG ==========
 
 /**
  * Generiert eine PDF-Datei aus dem Lebenslauf-Vorschaubereich
  */
+/**
+ * Generiert eine PDF-Datei aus dem Lebenslauf-Vorschaubereich
+ * Enthält Optimierungen für eine saubere Darstellung und korrekte Formatierung
+ */
 function generatePDF() {
+    // Lebenslauf-Container abrufen
     const element = document.getElementById("resumePreview");
     
     if (!element) {
         console.error("Das Element zum Generieren der PDF wurde nicht gefunden.");
         return;
     }
-    
-    // Element klonen, um das Original nicht zu verändern
-    const elementClone = element.cloneNode(true);
-    
-    // Spezifische Stile für optimale PDF-Darstellung anwenden
-    elementClone.style.width = "210mm";
-    elementClone.style.height = "auto"; 
-    elementClone.style.padding = "15mm";
-    elementClone.style.backgroundColor = "white";
-    elementClone.style.color = "black";
-    elementClone.style.textAlign = "left";  // Linksbündige Ausrichtung sicherstellen
-    
-    // Temporären Container erstellen
-    const tempContainer = document.createElement("div");
-    tempContainer.style.position = "absolute";
-    tempContainer.style.left = "-9999px";
-    tempContainer.appendChild(elementClone);
-    document.body.appendChild(tempContainer);
     
     // Lade-Indikator anzeigen
     const loadingIndicator = document.createElement("div");
@@ -96,48 +207,40 @@ function generatePDF() {
     loadingIndicator.style.zIndex = "9999";
     document.body.appendChild(loadingIndicator);
     
-    // HTML2PDF Optionen
+    // Name des Bewerbers für den Dateinamen holen
+    const lastName = document.getElementById("previewLastName").textContent || 'dokument';
+    
+    // Einfachere Optionen für html2pdf
     const opt = {
-        margin: [10, 10, 15, 10],
-        filename: 'resume.pdf',
-        image: { type: 'jpeg', quality: 1 },
+        margin: [10, 10, 10, 10],
+        filename: `lebenslauf_${lastName}.pdf`,
+        image: { type: 'jpeg', quality: 0.98 },
         html2canvas: { 
-            scale: 2,
+            scale: 1,
             useCORS: true,
-            logging: true,
-            letterRendering: true,
-            allowTaint: false,
-            scrollY: 0,
-            windowWidth: document.documentElement.offsetWidth,
-            windowHeight: document.documentElement.offsetHeight
+            logging: false
         },
         jsPDF: { 
             unit: 'mm', 
             format: 'a4', 
-            orientation: 'portrait',
-            compress: false,
-            putOnlyUsedFonts: true
-        },
-        pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+            orientation: 'portrait'
+        }
     };
     
-    // PDF generieren
+    // PDF generieren mit minimaler Manipulation
     html2pdf()
         .set(opt)
-        .from(elementClone)
+        .from(element)
         .save()
         .then(() => {
-            document.body.removeChild(tempContainer);
             document.body.removeChild(loadingIndicator);
         })
         .catch(error => {
             console.error("Fehler bei der PDF-Generierung:", error);
-            document.body.removeChild(tempContainer);
             document.body.removeChild(loadingIndicator);
-            alert("Bei der Erstellung der PDF ist ein Fehler aufgetreten.");
+            alert("Bei der Erstellung der PDF ist ein Fehler aufgetreten. Bitte versuche es erneut.");
         });
 }
-
 /**
  * Lädt die gespeicherten Daten in die Vorschauseite
  */
@@ -155,101 +258,87 @@ function loadPreview() {
     
     const resumeData = JSON.parse(resumeDataString);
     
-    // Vorschauseite mit den geladenen Daten füllen
+    // Grundlegende Informationen
     document.getElementById("previewFirstName").textContent = resumeData.firstName || '';
     document.getElementById("previewLastName").textContent = resumeData.lastName || '';
+    document.getElementById("previewPhone").textContent = resumeData.phone || '';
+    document.getElementById("previewMail").textContent = resumeData.mail || '';
     
-    // Daten in die zweite Section übertragen
-    document.getElementById("previewFirstName2").textContent = resumeData.firstName || '';
-    document.getElementById("previewLastName2").textContent = resumeData.lastName || '';
+    // Verstecke Kontaktinformationen, wenn sie leer sind
+    document.getElementById("contactPhone").style.display = resumeData.phone ? 'inline' : 'none';
+    document.getElementById("contactEmail").style.display = resumeData.mail ? 'inline' : 'none';
     
-    // Telefonnummer anzeigen, falls vorhanden
-    if (document.getElementById("previewPhone")) {
-        document.getElementById("previewPhone").textContent = resumeData.phone || '';
-    }
+    // Bildung
+    document.getElementById("previewSchool").textContent = resumeData.school || '';
+    document.getElementById("previewDegree").textContent = resumeData.degree || 'Abschluss';
+    document.getElementById("previewGraduationYear").textContent = resumeData.graduationYear || '';
     
-    if (document.getElementById("previewMail")) {
-        document.getElementById("previewMail").textContent = resumeData.mail || '';
-    }
+    // Verstecke Bildungsabschnitt, wenn alle Felder leer sind
+    const hasEducation = resumeData.school || resumeData.degree || resumeData.graduationYear;
+    document.getElementById("educationSection").style.display = hasEducation ? 'block' : 'none';
+    
+    // Berufserfahrung
+    document.getElementById("previewCompany").textContent = resumeData.company || '';
+    document.getElementById("previewPosition").textContent = resumeData.position || 'Position';
+    document.getElementById("previewWorkPeriod").textContent = resumeData.workPeriod || '';
+    document.getElementById("previewDescription").textContent = resumeData.description || '';
+    
+    // Verstecke Berufserfahrungsabschnitt, wenn alle Felder leer sind
+    const hasExperience = resumeData.company || resumeData.position || 
+                         resumeData.workPeriod || resumeData.description;
+    document.getElementById("experienceSection").style.display = hasExperience ? 'block' : 'none';
+    
     console.log("Vorschaudaten erfolgreich geladen");
+}
+
+// Hilfsfunktion zum Ausblenden leerer Sektionen
+function hideEmptySections() {
+    const sections = document.querySelectorAll('.resumeSection');
+    
+    sections.forEach(section => {
+        // Prüfe, ob alle dynamischen Felder in dieser Sektion leer sind
+        const dynamicFields = section.querySelectorAll('[id^="preview"]');
+        let allEmpty = true;
+        
+        dynamicFields.forEach(field => {
+            if (field.textContent.trim() !== '') {
+                allEmpty = false;
+            }
+        });
+        
+        // Wenn alle Felder leer sind, blende die Sektion aus
+        if (allEmpty && dynamicFields.length > 0) {
+            section.style.display = 'none';
+        } else {
+            section.style.display = 'block';
+        }
+    });
 }
 
 // ========== SEITEN-INITIALISIERUNG ==========
 
 // Event-Listener beim Laden der Seite
 window.addEventListener('DOMContentLoaded', function() {
-  // Prüfe, ob wir auf der Eingabeseite sind
-  if (document.getElementById('userForm')) {
-    // FormController initialisieren
-    const formCtrl = new FormController('userForm');
+    // Progress aus localStorage laden, falls vorhanden
+    const savedProgress = localStorage.getItem('formProgress');
+    if (savedProgress) {
+        progress = parseInt(savedProgress);
+        updateProgressbar(progress);
+    }
     
-    // Fehler-Container setzen
-    formCtrl.setErrorContainer('errorMessage');
-    
-    // Felder hinzufügen mit Validierungsregeln
-    formCtrl.addField('firstName', { 
-        required: true,
-        errorMessage: 'Bitte gib deinen Vornamen ein.'
-    });
-    
-    formCtrl.addField('lastName', { 
-        required: true,
-        errorMessage: 'Bitte gib deinen Nachnamen ein.'
-    });
-    
-    formCtrl.addField('phone', { 
-        required: true,
-        pattern: /^[0-9]{6,}$/,
-        errorMessage: 'Bitte gib eine gültige Telefonnummer ein (nur Zahlen, mindestens 6 Ziffern).',
-        liveValidate: true // Live-Validierung während der Eingabe
-    });
-
-        formCtrl.addField('mail', { 
-            required: true,
-            pattern: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-            errorMessage: 'Bitte gib eine gültige E-Mail-Adresse ein.',
-            liveValidate: true
-        });
-        
-        const referrer = document.referrer;
-        const isComingFromLandingPage = referrer.includes('index.html');
-        
-        // Vorhandene Daten laden
-        const savedData = localStorage.getItem('resumeData');
-        
-        if (isComingFromLandingPage) {
-            // Wenn von der Landingpage kommend, Formular leeren
-            localStorage.removeItem('resumeData');
-            formCtrl.fillWithData({
-                firstName: '',
-                lastName: '',
-                phone: ''
-            });
-        } else if (savedData) {
-            // Von anderen Seiten (z.B. Vorschau): Daten laden
-            formCtrl.fillWithData(JSON.parse(savedData));
+    // Prüfe, ob wir auf der Eingabeseite sind
+    if (document.getElementById('userForm')) {
+        // Je nach Fortschritt das richtige Formular anzeigen
+        if (progress === 25) {
+            openPersonalInfoInput();
+        } else if (progress === 50) {
+            openEducationInput();
+        } else if (progress === 75) {
+            openResumeInput();
+        } else if (progress === 100) {
+            // Wir sind mit allen Formularen fertig, zur Vorschau navigieren
+            window.location.href = 'preview.html';
         }
-        
-        // Formular-Button einrichten
-        document.getElementById('nextButton').addEventListener('click', function() {
-            formCtrl.submit(function(data) {
-                // Daten speichern
-                localStorage.setItem('resumeData', JSON.stringify(data));
-                
-                // Fortschritt aktualisieren
-                progress += 25; 
-                updateProgressbar(progress); 
-                console.log(progress)
-                
-              if(progress == 100){
-                 window.location.href = 'preview.html';
-                }else if(progress == 50){ 
-                    openEducationInput()
-                }else if(progress == 75){ 
-                    openResumeInput()
-                }
-            });
-        });
     }
     
     // Prüfe, ob wir auf der Vorschauseite sind
@@ -258,10 +347,17 @@ window.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-function openEducationInput(){ 
-    document.getElementById('formContainer').innerHTML = ``;
+function navigateBackFromPreview() {
+    // Fortschritt auf 75% setzen (letzte Formularseite)
+    localStorage.setItem('formProgress', 75);
+    
+    // Zurück zur Eingabeseite navigieren
+    window.location.href = "inputpage.html";
 }
 
-function openResumeInput(){ 
-    document.getElementById('formContainer').innerHTML = ``;
-}
+
+
+// Exportiere benötigte Funktionen, damit form-controller.js sie verwenden kann
+window.openPersonalInfoInput = openPersonalInfoInput;
+window.openEducationInput = openEducationInput;
+window.openResumeInput = openResumeInput;

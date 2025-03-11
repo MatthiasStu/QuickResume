@@ -126,7 +126,7 @@ a:hover{
 .designElement{
     position: absolute;
     height: 75px;
-    left: 150px;
+    left: 220px;
     margin-top: 30px;
     rotate: -15deg;
     margin-right: 10px;
@@ -170,6 +170,7 @@ a:hover{
     position: fixed;
     left: 0;
     top: 0;
+    z-index: 9999;
     width: 100%;
     height: 100%;
     background-color: rgba(0, 0, 0, 0.5); /* Dunkler Hintergrund */
@@ -350,72 +351,156 @@ a:hover{
     justify-content: flex-start;
 }
 
-.formContainer {
-    width: 80%;
-    max-width: 600px;
-    margin: 30px auto;
-    padding: 30px;
+
+formContainer {
+    width: 90%;
+    max-width: 800px;
+    margin: 35px auto;
+    padding: 35px 40px;
     background-color: white;
-    border-radius: 10px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    border: 1px solid rgba(0, 123, 255, 0.1);
-    text-align: left;
-}
-
-.formContainer h2 {
-    color: #2c3e50;
-    margin-top: 0;
-    margin-bottom: 25px;
-    font-family: 'Poppins', sans-serif;
-    font-weight: 600;
-    text-align: center;
-    padding-bottom: 10px;
-    border-bottom: 2px solid #eef3fd;
-}
-
-.formGroup {
-    margin-bottom: 20px;
-}
-
-.formGroup label {
-    display: block;
-    margin-bottom: 8px;
-    font-weight: 500;
-    color: #333;
-    font-size: 16px;
-}
-
-.formGroup input {
-    width: 100%;
-    padding: 12px;
-    border: 1px solid #e0e0e0;
-    border-radius: 6px;
-    font-size: 16px;
-    transition: border-color 0.3s, box-shadow 0.3s;
-    background-color: #f9f9f9;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
     font-family: 'Lato', sans-serif;
 }
 
-.formGroup input:focus {
+/* Überschrift des Formulars */
+.formContainer h2 {
+    color: #2c3e50;
+    font-size: 26px;
+    margin-top: 0;
+    margin-bottom: 30px;
+    font-weight: 600;
+    text-align: center;
+    padding-bottom: 18px;
+    border-bottom: 2px solid #eef3fd;
+    margin-top: 22px;
+}
+
+/* Formulargruppen-Styling mit mehr Abstand */
+.formGroup {
+    margin-bottom: 28px;
+    position: relative;
+    width: 100%;
+}
+
+
+
+/* Label-Styling */
+.formGroup label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: 600;
+    font-size: 16px;
+    color: #333;
+}
+
+/* Eingabefeld-Styling mit mehr Platz */
+.formGroup input,
+.formGroup textarea {
+    width: 200%;
+    padding: 14px 18px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 16px;
+    color: #333;
+    transition: all 0.3s ease;
+    background-color: #f9f9f9;
+    font-family: 'Lato', sans-serif;
+    box-sizing: border-box;
+    margin-left: -50%;
+}
+
+/* Hover-Effekt für Eingabefelder */
+.formGroup input:hover,
+.formGroup textarea:hover {
+    border-color: #b8c2cc;
+}
+
+/* Fokus-Effekt für Eingabefelder */
+.formGroup input:focus,
+.formGroup textarea:focus {
     outline: none;
     border-color: #007bff;
     box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.2);
     background-color: white;
 }
 
-.formGroup input:hover {
-    border-color: #b8c2cc;
+/* Textarea-spezifisches Styling */
+.formGroup textarea {
+    resize: vertical;
+    min-height: 120px;
+    line-height: 1.6;
 }
 
-/* Optionale Animation für schöneren Fokus-Effekt */
-@keyframes focusAnimation {
-    0% { box-shadow: 0 0 0 0 rgba(0, 123, 255, 0); }
-    50% { box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.3); }
-    100% { box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.2); }
+/* Fehlermeldung-Styling */
+.errorMessage {
+    background-color: #fff5f5;
+    color: #e53e3e;
+    border-left: 4px solid #e53e3e;
+    padding: 14px 18px;
+    margin-top: 20px;
+    border-radius: 6px;
+    font-size: 15px;
+    font-weight: 500;
+    display: none;
 }
 
-.formGroup input:focus {
-    animation: focusAnimation 0.5s forwards;
+/* Mehr Platz zwischen Formular und Buttons */
+.btnSection2 {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 25px;
+    margin-top: 40px;
+    margin-bottom: 50px;
+}
+
+/* Größere Buttons für bessere Nutzererfahrung */
+.blueButton2 {
+    margin-left: 0;
+    background-color: #007bff;
+    color: #ffffff; 
+    border: 2px solid #007bff; 
+    padding: 12px 24px; 
+    font-size: 16px; 
+    font-weight: 500;
+    font-family: 'Lato', sans-serif; 
+    border-radius: 6px; 
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 12px rgba(0, 123, 255, 0.3);
+    min-width: 120px;
+}
+
+.backButton {
+    margin-left: 0;
+    background-color: #ffffff;
+    color: #222222; 
+    border: 2px solid rgba(74, 74, 74, 0.1); 
+    padding: 12px 24px; 
+    font-size: 16px; 
+    font-weight: 500;
+    font-family: 'Lato', sans-serif; 
+    border-radius: 6px; 
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 12px rgba(41, 41, 41, 0.12);
+    min-width: 120px;
+}
+
+/* Optionale Felder anzeigen mit subtilerem Design */
+.formGroup label[for="school"]::after,
+.formGroup label[for="degree"]::after,
+.formGroup label[for="graduationYear"]::after,
+.formGroup label[for="company"]::after,
+.formGroup label[for="position"]::after,
+.formGroup label[for="workPeriod"]::after,
+.formGroup label[for="description"]::after {
+    content: " (optional)";
+    font-size: 14px;
+    color: #888;
+    font-weight: normal;
+    margin-left: 5px;
 }
 
 /* Preview Styles */
@@ -474,3 +559,107 @@ a:hover{
     display: none;
     color: red;
 }
+
+.image-upload-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.image-preview-wrapper {
+    width: 150px;
+    height: 150px;
+    margin-bottom: 15px;
+}
+
+.image-preview {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: 2px dashed #ccc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    background-color: #f9f9f9;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.image-preview:hover {
+    border-color: #3498db;
+}
+
+.image-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.upload-icon {
+    font-size: 40px;
+    color: #ccc;
+}
+
+.upload-button, .remove-button {
+    padding: 8px 16px;
+    margin: 5px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.upload-button {
+    background-color: #f1f1f1;
+    color: #333;
+    border: 1px solid #ddd;
+}
+
+.remove-button {
+    background-color: #fff5f5;
+    color: #e53e3e;
+    border: 1px solid #e53e3e;
+}
+
+.upload-button:hover {
+    background-color: #e9e9e9;
+}
+
+.remove-button:hover {
+    background-color: #fee2e2;
+}
+
+/* CSS für das Profilbild in der Vorschau und PDF */
+.profile-image-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.profile-image {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #3498db;
+}
+
+/* Anpassungen für die Druckansicht */
+.resumeHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.resumeHeader .header-text {
+    flex: 1;
+}
+
+.resumeHeader .header-image {
+    width: 100px;
+    height: 100px;
+    margin-left: 20px;
+}
+
+
