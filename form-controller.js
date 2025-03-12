@@ -104,6 +104,10 @@ class FormController {
       for (const fieldId in this.fields) {
         data[fieldId] = this.fields[fieldId].value;
       }
+      const profileImage = localStorage.getItem('profileImage');
+      if (profileImage) {
+        data.profileImage = profileImage;
+      }
       
       return data;
     }

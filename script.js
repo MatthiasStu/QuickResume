@@ -216,7 +216,7 @@ function generatePDF() {
         filename: `lebenslauf_${lastName}.pdf`,
         image: { type: 'jpeg', quality: 0.98 },
         html2canvas: { 
-            scale: 1,
+            scale: 2,  // Erhöhe die Skalierung für bessere Bildqualität
             useCORS: true,
             logging: false
         },
@@ -249,6 +249,7 @@ function loadPreview() {
     
     // Daten aus dem localStorage laden
     const resumeDataString = localStorage.getItem("resumeData");
+    const profileImage = localStorage.getItem("profileImage");
     
     if (!resumeDataString) {
         console.warn("Keine gespeicherten Daten gefunden, Umleitung zur Eingabeseite");
@@ -263,6 +264,25 @@ function loadPreview() {
     document.getElementById("previewLastName").textContent = resumeData.lastName || '';
     document.getElementById("previewPhone").textContent = resumeData.phone || '';
     document.getElementById("previewMail").textContent = resumeData.mail || '';
+    
+    // Profilbild hinzufügen
+    const previewProfileImage = document.getElementById("previewProfileImage");
+    if (profileImage) {
+        // Erstelle ein Bild-Element
+        const imgElement = document.createElement('img');
+        imgElement.src = profileImage;
+        imgElement.classList.add('profile-image');
+        
+        // Lösche vorhandene Inhalte und füge neues Bild hinzu
+        previewProfileImage.innerHTML = '';
+        previewProfileImage.appendChild(imgElement);
+        
+        // Zeige den Profilbild-Container
+        previewProfileImage.style.display = 'block';
+    } else {
+        // Verstecke den Profilbild-Container, wenn kein Bild vorhanden ist
+        previewProfileImage.style.display = 'none';
+    }
     
     // Verstecke Kontaktinformationen, wenn sie leer sind
     document.getElementById("contactPhone").style.display = resumeData.phone ? 'inline' : 'none';
