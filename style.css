@@ -325,21 +325,24 @@ a:hover{
 }
 
 .image-preview {
-    width: 150px;
-    height: 150px;
-    border-radius: 50%;
-    border: 2px solid #ccc;
+    width: 100%;
+    height: 100%;
+    /* Remove or change these properties to make it square */
+    /* border-radius: 50%; - Remove this line */
+    border: 2px dashed #ccc; /* You can keep this or change to a regular border */
     display: flex;
     align-items: center;
     justify-content: center;
     overflow: hidden;
-    background-color: #f4f4f4;
+    background-color: #f9f9f9;
+    transition: all 0.3s ease;
+    cursor: pointer;
 }
 
 .image-preview img {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: contain;
 }
 
 #imageUpload {
@@ -640,7 +643,7 @@ formContainer {
 .profile-image {
     width: 120px;
     height: 120px;
-    border-radius: 50%;
+   
     object-fit: cover;
     
 }

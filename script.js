@@ -104,11 +104,16 @@ function initializeFormController() {
     formCtrl.setErrorContainer('errorMessage');
     
     // Vorhandene Felder im DOM finden und dem Controller hinzufügen
-    const inputs = document.querySelectorAll('#userForm input, #userForm textarea');
+    const inputs = document.querySelectorAll('#userForm input:not([type="file"]), #userForm textarea');
     
     inputs.forEach(input => {
         const fieldId = input.id;
-        let validationRules = { required: true };
+        // Prüfe, ob das Feld optional ist
+        const label = document.querySelector(`label[for="${fieldId}"]`);
+        const isOptional = label ? label.textContent.toLowerCase().includes('optional') : false;
+        
+        // Validierungsregeln basierend auf Optionalität setzen
+        let validationRules = { required: !isOptional };
         
         // Spezifische Validierungsregeln basierend auf Feldtyp hinzufügen
         if (fieldId === 'phone') {
@@ -123,6 +128,12 @@ function initializeFormController() {
             validationRules.pattern = /^(19|20)\d{2}$/;
             validationRules.errorMessage = 'Bitte gib ein gültiges Jahr ein (z.B. 2020).';
             validationRules.liveValidate = true;
+            validationRules.required = false; // Explizit als optional markieren
+        }
+        
+        // Bildungs- und Berufserfahrungsfelder als nicht erforderlich markieren
+        if (['school', 'degree', 'graduationYear', 'company', 'position', 'workPeriod', 'description'].includes(fieldId)) {
+            validationRules.required = false;
         }
         
         formCtrl.addField(fieldId, validationRules);
@@ -133,10 +144,10 @@ function initializeFormController() {
     if (savedData) {
         formCtrl.fillWithData(JSON.parse(savedData));
     }
+    
     // Formular-Button neu einrichten
     setupFormButton(formCtrl);
 }
-
 /**
  * Richtet den Weiter-Button für das aktuelle Formular ein
  */
@@ -156,24 +167,60 @@ function setupFormButton(formCtrl) {
                     JSON.parse(localStorage.getItem('resumeData')) : {};
                 const updatedData = {...existingData, ...data};
                 
-                // Aktualisierte Daten speichern
-                localStorage.setItem('resumeData', JSON.stringify(updatedData));
-                
-                // Fortschritt aktualisieren und zum nächsten Schritt gehen
-                if (progress === 25) {
-                    updateProgress(50);
-                    openEducationInput();
-                } else if (progress === 50) {
-                    updateProgress(75);
-                    openResumeInput();
-                } else if (progress === 75) {
-                    updateProgress(100);
-                    window.location.href = 'preview.html';
+                // Add error handling for localStorage
+                try {
+                    localStorage.setItem('resumeData', JSON.stringify(updatedData));
+                    
+                    // Fortschritt aktualisieren und zum nächsten Schritt gehen
+                    if (progress === 25) {
+                        updateProgress(50);
+                        openEducationInput();
+                    } else if (progress === 50) {
+                        updateProgress(75);
+                        openResumeInput();
+                    } else if (progress === 75) {
+                        updateProgress(100);
+                        window.location.href = 'preview.html';
+                    }
+                } catch (e) {
+                    console.error("Storage error:", e);
+                    
+                    // Handle the quota exceeded error specifically
+                    if (e.name === 'QuotaExceededError' || e.name === 'NS_ERROR_DOM_QUOTA_REACHED') {
+                        // Remove the profile image from localStorage and from the data object
+                        localStorage.removeItem('profileImage');
+                        delete updatedData.profileImage;
+                        
+                        // Try again without the image
+                        try {
+                            localStorage.setItem('resumeData', JSON.stringify(updatedData));
+                            
+                            alert("Das Bild ist zu groß für den Speicher und wurde entfernt. Bitte verwende ein kleineres Bild oder fahre ohne Bild fort.");
+                            
+                            // Continue to next step
+                            if (progress === 25) {
+                                updateProgress(50);
+                                openEducationInput();
+                            } else if (progress === 50) {
+                                updateProgress(75);
+                                openResumeInput();
+                            } else if (progress === 75) {
+                                updateProgress(100);
+                                window.location.href = 'preview.html';
+                            }
+                        } catch (innerError) {
+                            // If it still fails, clear everything and start over
+                            localStorage.clear();
+                            alert("Es gab ein Problem beim Speichern. Die Daten wurden zurückgesetzt.");
+                            window.location.href = "inputpage.html";
+                        }
+                    } else {
+                        alert("Es gab ein Problem beim Speichern der Daten.");
+                    }
                 }
             });
         });
-    }
-}
+}}
 
 // ========== PDF-GENERIERUNG ==========
 
@@ -185,15 +232,27 @@ function setupFormButton(formCtrl) {
  * Enthält Optimierungen für eine saubere Darstellung und korrekte Formatierung
  */
 function generatePDF() {
-    // Lebenslauf-Container abrufen
-    const element = document.getElementById("resumePreview");
+    // Get all the data we need
+    const firstName = document.getElementById("previewFirstName").textContent || '';
+    const lastName = document.getElementById("previewLastName").textContent || '';
+    const phone = document.getElementById("previewPhone").textContent || '';
+    const email = document.getElementById("previewMail").textContent || '';
+    const school = document.getElementById("previewSchool").textContent || '';
+    const degree = document.getElementById("previewDegree").textContent || 'Abschluss';
+    const graduationYear = document.getElementById("previewGraduationYear").textContent || '';
+    const company = document.getElementById("previewCompany").textContent || '';
+    const position = document.getElementById("previewPosition").textContent || 'Position';
+    const workPeriod = document.getElementById("previewWorkPeriod").textContent || '';
+    const description = document.getElementById("previewDescription").textContent || '';
     
-    if (!element) {
-        console.error("Das Element zum Generieren der PDF wurde nicht gefunden.");
-        return;
+    // Get the profile image
+    let profileImageSrc = '';
+    const profileImageElement = document.querySelector('.header-image img');
+    if (profileImageElement) {
+        profileImageSrc = profileImageElement.src;
     }
     
-    // Lade-Indikator anzeigen
+    // Create a loading indicator
     const loadingIndicator = document.createElement("div");
     loadingIndicator.textContent = "PDF wird erstellt...";
     loadingIndicator.style.position = "fixed";
@@ -207,16 +266,75 @@ function generatePDF() {
     loadingIndicator.style.zIndex = "9999";
     document.body.appendChild(loadingIndicator);
     
-    // Name des Bewerbers für den Dateinamen holen
-    const lastName = document.getElementById("previewLastName").textContent || 'dokument';
+    // Set a fixed size for the image container
+    const containerSize = 100;
     
-    // Einfachere Optionen für html2pdf
+    // Create PDF-specific header with improved image positioning
+    const headerHTML = `
+        <div style="position: relative; padding-bottom: 30px; margin-bottom: 25px; min-height: 120px;">
+            <div style="padding-right: 120px;">
+                <h1 style="font-size: 28px; margin: 0 0 10px 0; color: #2c3e50;">${firstName} ${lastName}</h1>
+                <div style="font-size: 14px; color: #555; margin-bottom: 25px;">
+                    ${phone ? `<span style="margin-right: 15px;">Tel: ${phone}</span>` : ''}
+                    ${email ? `<span>E-Mail: ${email}</span>` : ''}
+                </div>
+            </div>
+            ${profileImageSrc ? `
+                <div style="position: absolute; top: -10px; right: 0; width: ${containerSize}px; height: ${containerSize}px;">
+                    <img src="${profileImageSrc}" style="max-width: 100%; max-height: 100%; object-fit: contain;">
+                </div>
+            ` : ''}
+            <div style="border-bottom: 2px solid #3498db; width: 100%; position: absolute; bottom: 0;"></div>
+        </div>
+    `;
+    
+    // Education section
+    const hasEducation = school || degree || graduationYear;
+    const educationHTML = hasEducation ? `
+        <div style="margin-bottom: 25px;">
+            <h2 style="font-size: 20px; color: #3498db; margin: 0 0 15px 0; padding-bottom: 5px; border-bottom: 1px solid #eee;">Bildung</h2>
+            <div style="margin-bottom: 15px;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                    <span style="font-weight: bold; font-size: 16px;">${degree}</span>
+                    <span style="font-style: italic; color: #666;">${graduationYear}</span>
+                </div>
+                <div style="font-size: 15px; color: #3498db; margin-bottom: 5px;">${school}</div>
+            </div>
+        </div>
+    ` : '';
+    
+    // Experience section
+    const hasExperience = company || position || workPeriod || description;
+    const experienceHTML = hasExperience ? `
+        <div style="margin-bottom: 25px;">
+            <h2 style="font-size: 20px; color: #3498db; margin: 0 0 15px 0; padding-bottom: 5px; border-bottom: 1px solid #eee;">Berufserfahrung</h2>
+            <div style="margin-bottom: 15px;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                    <span style="font-weight: bold; font-size: 16px;">${position}</span>
+                    <span style="font-style: italic; color: #666;">${workPeriod}</span>
+                </div>
+                <div style="font-size: 15px; color: #3498db; margin-bottom: 5px;">${company}</div>
+                <div style="font-size: 14px; line-height: 1.4; margin-top: 8px;">${description}</div>
+            </div>
+        </div>
+    ` : '';
+    
+    // Create a fresh PDF-optimized template
+    const pdfTemplate = document.createElement('div');
+    pdfTemplate.style.fontFamily = 'Arial, sans-serif';
+    pdfTemplate.style.padding = '30px';
+    pdfTemplate.style.color = '#333';
+    
+    // Combine all sections
+    pdfTemplate.innerHTML = headerHTML + educationHTML + experienceHTML;
+    
+    // PDF options
     const opt = {
-        margin: [10, 10, 10, 10],
-        filename: `lebenslauf_${lastName}.pdf`,
+        margin: [15, 15, 15, 15],
+        filename: `lebenslauf_${lastName || 'dokument'}.pdf`,
         image: { type: 'jpeg', quality: 0.98 },
         html2canvas: { 
-            scale: 2,  // Erhöhe die Skalierung für bessere Bildqualität
+            scale: 2,
             useCORS: true,
             logging: false
         },
@@ -227,10 +345,10 @@ function generatePDF() {
         }
     };
     
-    // PDF generieren mit minimaler Manipulation
+    // Generate PDF
     html2pdf()
         .set(opt)
-        .from(element)
+        .from(pdfTemplate)
         .save()
         .then(() => {
             document.body.removeChild(loadingIndicator);
@@ -241,9 +359,8 @@ function generatePDF() {
             alert("Bei der Erstellung der PDF ist ein Fehler aufgetreten. Bitte versuche es erneut.");
         });
 }
-/**
- * Lädt die gespeicherten Daten in die Vorschauseite
- */
+ 
+
 function loadPreview() {
     console.log("Vorschau wird geladen...");
     
@@ -368,6 +485,22 @@ window.addEventListener('DOMContentLoaded', function() {
 });
 
 function navigateBackFromPreview() {
+    // Make sure the profile image is properly handled
+    // This ensures when you go back from preview, the image is still available
+    const profileImage = localStorage.getItem('profileImage');
+    
+    // Ensure profile image is included in the form data
+    if (profileImage) {
+        const existingData = localStorage.getItem('resumeData') ? 
+            JSON.parse(localStorage.getItem('resumeData')) : {};
+        
+        // Make sure the data includes a reference to having a profile image
+        existingData.hasProfileImage = true;
+        
+        // Update the resumeData
+        localStorage.setItem('resumeData', JSON.stringify(existingData));
+    }
+    
     // Fortschritt auf 75% setzen (letzte Formularseite)
     localStorage.setItem('formProgress', 75);
     

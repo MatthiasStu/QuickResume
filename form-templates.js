@@ -4,7 +4,7 @@ function openPersonalInfoInput() {
                 
                 <div class="image-upload-container">
                     <div class="image-preview-wrapper">
-                        <div class="image-preview" id="imagePreview">
+                        <div class="image-preview" id="imagePreview" style="border-radius: 0;">
                             <span class="upload-icon">+</span>
                         </div>
                     </div>
@@ -49,10 +49,12 @@ function openPersonalInfoInput() {
     if (savedProfileImage) {
         const img = document.createElement('img');
         img.src = savedProfileImage;
+        img.style.objectFit = 'contain'; // Ensure consistent display
         imagePreview.innerHTML = '';
         imagePreview.appendChild(img);
         removeImageBtn.style.display = 'inline-block';
     }
+    
 
     // Image upload event listener
     imageUpload.addEventListener('change', function(event) {
@@ -60,19 +62,36 @@ function openPersonalInfoInput() {
         if (file) {
             const reader = new FileReader();
             reader.onload = function(e) {
-                // Clear previous preview
-                imagePreview.innerHTML = '';
-                
-                // Create and append image
-                const img = document.createElement('img');
-                img.src = e.target.result;
-                imagePreview.appendChild(img);
-                
-                // Save image to localStorage
-                localStorage.setItem('profileImage', e.target.result);
-                
-                // Show remove button
-                removeImageBtn.style.display = 'inline-block';
+                // Resize and compress the image before storing
+                resizeAndCompressImage(e.target.result, 400, 400, 0.7)
+                    .then(compressedDataURL => {
+                        // Clear previous preview
+                        imagePreview.innerHTML = '';
+                        
+                        // Create and append image
+                        const img = document.createElement('img');
+                        img.src = compressedDataURL;
+                        img.style.objectFit = 'contain';
+                        imagePreview.appendChild(img);
+                        
+                        // Try to save to localStorage with error handling
+                        try {
+                            localStorage.setItem('profileImage', compressedDataURL);
+                            // Show remove button
+                            removeImageBtn.style.display = 'inline-block';
+                        } catch (error) {
+                            console.error('Failed to save image to localStorage:', error);
+                            alert('Das Bild ist zu groß für den Speicher. Bitte wähle ein kleineres Bild.');
+                            // Reset preview
+                            imagePreview.innerHTML = '<span class="upload-icon">+</span>';
+                            // Clear file input
+                            imageUpload.value = '';
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Image processing error:', error);
+                        alert('Es gab ein Problem bei der Bildverarbeitung. Bitte versuche es erneut.');
+                    });
             };
             reader.readAsDataURL(file);
         }
@@ -95,6 +114,48 @@ function openPersonalInfoInput() {
     
     // Neu-Initialisierung des FormControllers nach DOM-Änderung
     initializeFormController();
+}
+
+function resizeAndCompressImage(dataURL, maxWidth, maxHeight, quality) {
+    return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.onload = function() {
+            let width = img.width;
+            let height = img.height;
+            
+            // Calculate new dimensions
+            if (width > height) {
+                if (width > maxWidth) {
+                    height *= maxWidth / width;
+                    width = maxWidth;
+                }
+            } else {
+                if (height > maxHeight) {
+                    width *= maxHeight / height;
+                    height = maxHeight;
+                }
+            }
+            
+            // Create canvas and resize
+            const canvas = document.createElement('canvas');
+            canvas.width = width;
+            canvas.height = height;
+            
+            // Draw resized image
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, width, height);
+            
+            // Get compressed data URL
+            const compressedDataURL = canvas.toDataURL('image/jpeg', quality);
+            resolve(compressedDataURL);
+        };
+        
+        img.onerror = function() {
+            reject(new Error('Failed to load image'));
+        };
+        
+        img.src = dataURL;
+    });
 }
 /**
  * Öffnet das Bildungsformular (Fortschritt 50%)
