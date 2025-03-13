@@ -1,8 +1,8 @@
 /**
  * PDFGenerator - Zuständig für die Generierung von PDF-Dokumenten
  * 
- * Diese Klasse kapselt die PDF-Erstellungslogik und bietet
- * eine saubere Schnittstelle zum Generieren von Lebenslauf-PDFs.
+ * Diese Klasse nutzt jsPDF und html2canvas für bessere Kontrolle
+ * über den PDF-Erstellungsprozess, behält aber das ursprüngliche Layout.
  */
 import dataManager from '../core/dataManager.js';
 
@@ -19,39 +19,56 @@ class PDFGenerator {
     // Erstelle einen Ladeindikator
     this.createLoadingIndicator();
     
-    // HTML-Template für das PDF erstellen
-    const pdfTemplate = this.createPDFTemplate(resumeData, profileImage, accentColor);
+    // Erstelle ein temporäres Container-Element für das Rendering
+    const container = document.createElement('div');
+    container.style.position = 'absolute';
+    container.style.left = '-9999px';
+    container.style.top = '0';
+    container.style.width = '210mm'; // A4 Breite
     
-    // PDF-Optionen
-    const opt = {
-      margin: [15, 15, 15, 15],
-      filename: `lebenslauf_${resumeData.lastName || 'dokument'}.pdf`,
-      image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { 
-        scale: 2,
+    // Füge das Element zum DOM hinzu
+    document.body.appendChild(container);
+    
+    // HTML-Template für das PDF erstellen und in den Container einfügen
+    container.innerHTML = this.createPDFTemplate(resumeData, profileImage, accentColor);
+    
+    // Warte kurz, damit Bilder geladen werden können
+    setTimeout(() => {
+      // Verwende html2canvas zur Konvertierung des HTML in ein Canvas
+      html2canvas(container, {
+        scale: 2, // Höhere Auflösung
         useCORS: true,
-        logging: false
-      },
-      jsPDF: { 
-        unit: 'mm', 
-        format: 'a4', 
-        orientation: 'portrait'
-      }
-    };
-    
-    // Generiere PDF
-    html2pdf()
-      .set(opt)
-      .from(pdfTemplate)
-      .save()
-      .then(() => {
+        logging: false,
+        allowTaint: true
+      }).then(canvas => {
+        // Erstelle ein neues jsPDF-Dokument
+        const pdf = new jspdf.jsPDF({
+          orientation: 'portrait',
+          unit: 'mm',
+          format: 'a4',
+        });
+        
+        // Canvas in das PDF umwandeln
+        const imgData = canvas.toDataURL('image/jpeg', 1.0);
+        const imgWidth = 210; // A4 Breite in mm
+        const pageHeight = 297; // A4 Höhe in mm
+        const imgHeight = canvas.height * imgWidth / canvas.width;
+        
+        pdf.addImage(imgData, 'JPEG', 0, 0, imgWidth, imgHeight);
+        
+        // PDF speichern
+        pdf.save(`lebenslauf_${resumeData.lastName || 'dokument'}.pdf`);
+        
+        // Aufräumen
+        document.body.removeChild(container);
         this.removeLoadingIndicator();
-      })
-      .catch(error => {
-        console.error("Fehler bei der PDF-Generierung:", error);
+      }).catch(error => {
+        console.error("Fehler bei der Canvas-Erstellung:", error);
+        document.body.removeChild(container);
         this.removeLoadingIndicator();
         alert("Bei der Erstellung der PDF ist ein Fehler aufgetreten. Bitte versuche es erneut.");
       });
+    }, 500); // 500ms warten, damit Bilder geladen werden können
   }
 
   /**
@@ -87,32 +104,11 @@ class PDFGenerator {
   }
 
   /**
-   * Erzeugt einen helleren Farbton für eine gegebene Farbe
-   * @param {string} hexColor - Die Ausgangsfarbe als Hex-Code
-   * @param {number} percent - Prozentsatz der Aufhellung (0-100)
-   * @returns {string} Die aufgehellte Farbe als Hex-Code
-   */
-  getLighterShade(hexColor, percent = 90) {
-    // Wandle Hex in RGB um
-    let r = parseInt(hexColor.slice(1, 3), 16);
-    let g = parseInt(hexColor.slice(3, 5), 16);
-    let b = parseInt(hexColor.slice(5, 7), 16);
-    
-    // Berechne helleren Farbton
-    r = Math.floor(r + (255 - r) * (percent / 100));
-    g = Math.floor(g + (255 - g) * (percent / 100));
-    b = Math.floor(b + (255 - b) * (percent / 100));
-    
-    // Wandle zurück in Hex
-    return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
-  }
-
-  /**
    * Erstellt das HTML-Template für die PDF
    * @param {Object} data - Die Lebenslaufdaten
    * @param {string} profileImageSrc - Die Profilbild-URL
    * @param {string} accentColor - Die Akzentfarbe
-   * @returns {HTMLElement} Das Template-Element
+   * @returns {string} Das HTML-Template als String
    */
   createPDFTemplate(data, profileImageSrc, accentColor) {
     // Daten extrahieren
@@ -121,80 +117,70 @@ class PDFGenerator {
     const phone = data.phone || '';
     const email = data.mail || '';
     const school = data.school || '';
-    const degree = data.degree || 'Abschluss';
+    const degree = data.degree || '';
     const graduationYear = data.graduationYear || '';
     const company = data.company || '';
-    const position = data.position || 'Position';
+    const position = data.position || '';
     const workPeriod = data.workPeriod || '';
     const description = data.description || '';
     
-    // Nutze die bereitgestellte Akzentfarbe oder Standard-Blau, falls keine angegeben
-    const themeColor = accentColor || '#3498db';
-    const lighterThemeColor = this.getLighterShade(themeColor, 95);
+    // Nutze die bereitgestellte Akzentfarbe oder Standard-Lila, falls keine angegeben
+    const themeColor = accentColor || '#9b59b6';
     
-    // Konstante Größe für den Bildcontainer
-    const containerSize = 100;
-    
-    // Header mit Kontaktinformationen und Profilbild
-    const headerHTML = `
-      <div style="position: relative; padding-bottom: 30px; margin-bottom: 25px; min-height: 120px;">
-        <div style="padding-right: 120px;">
-          <h1 style="font-size: 28px; margin: 0 0 10px 0; color: #2c3e50;">${firstName} ${lastName}</h1>
-          <div style="font-size: 14px; color: #555; margin-bottom: 25px;">
-            ${phone ? `<span style="margin-right: 15px;">Tel: ${phone}</span>` : ''}
-            ${email ? `<span>E-Mail: ${email}</span>` : ''}
+    // Vollständiges HTML-Template als String zurückgeben
+    return `
+      <div style="font-family: 'Lato', Arial, sans-serif; color: #333; padding: 20px 30px; margin: 0; width: 100%; box-sizing: border-box;">
+        <!-- Header mit Name und Kontaktdaten -->
+        <table style="width: 100%; border-collapse: collapse;">
+          <tr>
+            <td style="vertical-align: top; padding-right: 20px;">
+              <h1 style="font-size: 28px; margin: 0 0 5px 0; color: #2c3e50;">${firstName} ${lastName}</h1>
+              <div style="font-size: 14px; color: #555;">
+                ${phone ? `<span style="margin-right: 20px;">Tel: ${phone}</span>` : ''}
+                ${email ? `<span>E-Mail: ${email}</span>` : ''}
+              </div>
+            </td>
+            <td style="vertical-align: top; width: 100px; text-align: right;">
+              ${profileImageSrc ? `
+                <img src="${profileImageSrc}" style="width: 100px; height: auto; display: block; margin-left: auto;">
+              ` : ''}
+            </td>
+          </tr>
+          <tr>
+            <td colspan="2" style="padding-top: 5px;">
+              <div style="border-bottom: 2px solid ${themeColor}; width: 100%;"></div>
+            </td>
+          </tr>
+        </table>
+        
+        <!-- Bildungsabschnitt -->
+        <div style="margin-top: 20px; margin-bottom: 25px;">
+          <h2 style="font-size: 20px; color: ${themeColor}; margin: 0 0 15px 0;">Bildung</h2>
+          
+          <div style="margin-bottom: 15px;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+              <span style="font-weight: bold; font-size: 16px; color: #333;">${degree || 'Erweiterter Sekundarabschluss 2'}</span>
+              <span style="font-style: italic; color: #666;">${graduationYear || '2018'}</span>
+            </div>
+            <div style="font-size: 15px; color: #333; margin-bottom: 5px;">${school || 'IGS Melle'}</div>
           </div>
         </div>
-        ${profileImageSrc ? `
-          <div style="position: absolute; top: -10px; right: 0; width: ${containerSize}px; height: ${containerSize}px;">
-            <img src="${profileImageSrc}" style="max-width: 100%; max-height: 100%; object-fit: contain;">
+        
+        <!-- Berufserfahrungsabschnitt -->
+        <div style="margin-bottom: 25px;">
+          <h2 style="font-size: 20px; color: ${themeColor}; margin: 0 0 15px 0;">Berufserfahrung</h2>
+          
+          <div style="margin-bottom: 15px;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+              <span style="font-weight: bold; font-size: 16px; color: #333;">${position || 'Weiterbildung zum Frontend Web Developer'}</span>
+              <span style="font-style: italic; color: #666;">${workPeriod || '2018-2019'}</span>
+            </div>
+            <div style="font-size: 15px; color: #333; margin-bottom: 5px;">${company || 'Developer Akademie'}</div>
+            <div style="font-size: 14px; line-height: 1.4; margin-top: 8px; color: #333;">${description || 'TÜV Zertifizierter Bildungsträger, weiterbildung zum Softwareentwickler Schwerpunkt Frontend Entwicklung'}</div>
           </div>
-        ` : ''}
-        <div style="border-bottom: 2px solid ${themeColor}; width: 100%; position: absolute; bottom: 0;"></div>
+        </div>
       </div>
     `;
-    
-    // Bildungsabschnitt
-    const hasEducation = school || degree || graduationYear;
-    const educationHTML = hasEducation ? `
-      <div style="margin-bottom: 25px;">
-        <h2 style="font-size: 20px; color: ${themeColor}; margin: 0 0 15px 0; padding-bottom: 5px; border-bottom: 1px solid ${lighterThemeColor};">Bildung</h2>
-        <div style="margin-bottom: 15px;">
-          <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
-            <span style="font-weight: bold; font-size: 16px;">${degree}</span>
-            <span style="font-style: italic; color: #666;">${graduationYear}</span>
-          </div>
-          <div style="font-size: 15px; color: ${themeColor}; margin-bottom: 5px;">${school}</div>
-        </div>
-      </div>
-    ` : '';
-    
-    // Berufserfahrungsabschnitt
-    const hasExperience = company || position || workPeriod || description;
-    const experienceHTML = hasExperience ? `
-      <div style="margin-bottom: 25px;">
-        <h2 style="font-size: 20px; color: ${themeColor}; margin: 0 0 15px 0; padding-bottom: 5px; border-bottom: 1px solid ${lighterThemeColor};">Berufserfahrung</h2>
-        <div style="margin-bottom: 15px;">
-          <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
-            <span style="font-weight: bold; font-size: 16px;">${position}</span>
-            <span style="font-style: italic; color: #666;">${workPeriod}</span>
-          </div>
-          <div style="font-size: 15px; color: ${themeColor}; margin-bottom: 5px;">${company}</div>
-          <div style="font-size: 14px; line-height: 1.4; margin-top: 8px;">${description}</div>
-        </div>
-      </div>
-    ` : '';
-    
-    // Neues Element für PDF-optimiertes Template erstellen
-    const pdfTemplate = document.createElement('div');
-    pdfTemplate.style.fontFamily = 'Arial, sans-serif';
-    pdfTemplate.style.padding = '30px';
-    pdfTemplate.style.color = '#333';
-    
-    // Alle Abschnitte kombinieren
-    pdfTemplate.innerHTML = headerHTML + educationHTML + experienceHTML;
-    
-    return pdfTemplate;
   }
 }
 

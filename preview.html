@@ -13,90 +13,12 @@
     <link rel="stylesheet" href="css/resume.css">
     <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
     <!-- HTML2PDF-Bibliothek für die PDF-Generierung einbinden -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"
-        integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg=="
-        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <!-- Hauptanwendungs-Skript im Modul-Format -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script type="module" src="js/app.js"></script>
     <title>QuickResume - Preview</title>
     <style>
-        .color-picker-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin: 20px 0;
-            padding: 15px;
-            background-color: #f9f9f9;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-        
-        .color-picker-wrapper {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin: 0 15px;
-        }
-        
-        .color-picker-label {
-            margin-bottom: 8px;
-            font-weight: 600;
-            font-size: 14px;
-        }
-        
-        .color-picker {
-            width: 70px;
-            height: 40px;
-            padding: 0;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-        }
-        
-        .color-picker::-webkit-color-swatch-wrapper {
-            padding: 0;
-        }
-        
-        .color-picker::-webkit-color-swatch {
-            border: none;
-            border-radius: 4px;
-        }
-        
-        .preset-colors {
-            display: flex;
-            gap: 8px;
-            margin-top: 10px;
-        }
-        
-        .preset-color {
-            width: 25px;
-            height: 25px;
-            border-radius: 50%;
-            cursor: pointer;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-            transition: transform 0.2s;
-        }
-        
-        .preset-color:hover {
-            transform: scale(1.1);
-        }
-        
-        .reset-color {
-            background-color: #f1f1f1;
-            color: #333;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            padding: 5px 10px;
-            font-size: 14px;
-            cursor: pointer;
-            transition: background-color 0.2s;
-            margin-left: 15px;
-        }
-        
-        .reset-color:hover {
-            background-color: #e9e9e9;
-        }
+       
     </style>
 </head>
 
@@ -141,6 +63,7 @@
 
         <div class="previewContainer">
             <div id="resumePreview" class="resumeTemplate">
+                <!-- Header -->
                 <div class="resumeHeader">
                     <div class="header-text">
                         <h1><span id="previewFirstName"></span> <span id="previewLastName"></span></h1>
@@ -150,9 +73,11 @@
                         </div>
                     </div>
                     <div class="header-image" id="previewProfileImage">
+                        <!-- Profilbild wird hier eingefügt -->
                     </div>
                 </div>
                 
+                <!-- Bildung -->
                 <div id="educationSection" class="resumeSection">
                     <h2>Bildung</h2>
                     <div class="resumeItem">
@@ -164,6 +89,7 @@
                     </div>
                 </div>
                 
+                <!-- Berufserfahrung -->
                 <div id="experienceSection" class="resumeSection">
                     <h2>Berufserfahrung</h2>
                     <div class="resumeItem">
@@ -177,7 +103,6 @@
                 </div>
             </div>
         </div>
-     
 
         <div class="btnSection2">
             <button class="backButton">Zurück</button>

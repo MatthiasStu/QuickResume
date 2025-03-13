@@ -115,7 +115,6 @@ class PreviewRenderer {
     // Selektiere alle Elemente, die die Akzentfarbe verwenden
     const header = resumePreview.querySelector('.resumeHeader');
     const sectionHeadings = resumePreview.querySelectorAll('.resumeSection h2');
-    const subtitles = resumePreview.querySelectorAll('.resumeItemSubtitle');
     
     // Wende die Farbe an
     if (header) {
@@ -124,38 +123,12 @@ class PreviewRenderer {
     
     sectionHeadings.forEach(heading => {
       heading.style.color = color;
-      heading.style.borderBottomColor = this.getLighterShade(color);
-    });
-    
-    subtitles.forEach(subtitle => {
-      subtitle.style.color = color;
     });
     
     // Speichere die Farbe für die PDF-Generierung
     if (color !== this.currentAccentColor) {
       this.currentAccentColor = color;
     }
-  }
-
-  /**
-   * Erzeugt einen helleren Farbton für eine gegebene Farbe
-   * @param {string} hexColor - Die Ausgangsfarbe als Hex-Code
-   * @param {number} percent - Prozentsatz der Aufhellung (0-100)
-   * @returns {string} Die aufgehellte Farbe als Hex-Code
-   */
-  getLighterShade(hexColor, percent = 90) {
-    // Wandle Hex in RGB um
-    let r = parseInt(hexColor.slice(1, 3), 16);
-    let g = parseInt(hexColor.slice(3, 5), 16);
-    let b = parseInt(hexColor.slice(5, 7), 16);
-    
-    // Berechne helleren Farbton
-    r = Math.floor(r + (255 - r) * (percent / 100));
-    g = Math.floor(g + (255 - g) * (percent / 100));
-    b = Math.floor(b + (255 - b) * (percent / 100));
-    
-    // Wandle zurück in Hex
-    return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
   }
 
   /**
@@ -188,15 +161,18 @@ class PreviewRenderer {
     document.getElementById("contactEmail").style.display = resumeData.mail ? 'inline' : 'none';
     
     // Bildung
-    this.updateTextContent("previewSchool", resumeData.school || '');
-    this.updateTextContent("previewDegree", resumeData.degree || 'Abschluss');
-    this.updateTextContent("previewGraduationYear", resumeData.graduationYear || '');
+    this.updateTextContent("previewSchool", resumeData.school || 'IGS Melle');
+    this.updateTextContent("previewDegree", resumeData.degree || 'Erweiterter Sekundarabschluss 2');
+    this.updateTextContent("previewGraduationYear", resumeData.graduationYear || '2018');
     
     // Berufserfahrung
-    this.updateTextContent("previewCompany", resumeData.company || '');
-    this.updateTextContent("previewPosition", resumeData.position || 'Position');
-    this.updateTextContent("previewWorkPeriod", resumeData.workPeriod || '');
-    this.updateTextContent("previewDescription", resumeData.description || '');
+    this.updateTextContent("previewCompany", resumeData.company || 'Developer Akademie');
+    this.updateTextContent("previewPosition", resumeData.position || 'Weiterbildung zum Frontend Web Developer');
+    this.updateTextContent("previewWorkPeriod", resumeData.workPeriod || '2018-2019');
+    this.updateTextContent("previewDescription", resumeData.description || 'TÜV Zertifizierter Bildungsträger, weiterbildung zum Softwareentwickler Schwerpunkt Frontend Entwicklung');
+    
+    // Nur die Hauptüberschriften in Akzentfarbe
+    this.updateSectionColors();
     
     // Leere Sektionen ausblenden
     this.hideEmptySections();
@@ -205,6 +181,24 @@ class PreviewRenderer {
     this.applyAccentColor(this.currentAccentColor);
     
     console.log("Vorschaudaten erfolgreich geladen");
+  }
+
+  /**
+   * Setzt die korrekten Farben für alle Abschnitte im Lebenslauf
+   */
+  updateSectionColors() {
+    // Institutionen/Unternehmen sollten normale Farbe haben, nicht die Akzentfarbe
+    const schoolEl = document.getElementById("previewSchool");
+    const companyEl = document.getElementById("previewCompany");
+    
+    if (schoolEl) schoolEl.style.color = "#333";
+    if (companyEl) companyEl.style.color = "#333";
+    
+    // Überschriften haben die Akzentfarbe (wird durch applyAccentColor behandelt)
+    const sectionTitles = document.querySelectorAll('.resumeSection h2');
+    sectionTitles.forEach(title => {
+      title.style.color = this.currentAccentColor;
+    });
   }
 
   /**
