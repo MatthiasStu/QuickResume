@@ -10,7 +10,11 @@ class DataManager {
         RESUME_DATA: 'resumeData',
         PROFILE_IMAGE: 'profileImage',
         FORM_PROGRESS: 'formProgress',
+        ACCENT_COLOR: 'accentColor', // Neue Eigenschaft für die Akzentfarbe
       };
+      
+      // Standard-Akzentfarbe (blau)
+      this.defaultAccentColor = '#3498db';
     }
   
     /**
@@ -121,12 +125,44 @@ class DataManager {
     }
   
     /**
+     * Lädt die gespeicherte Akzentfarbe oder gibt die Standardfarbe zurück
+     * @returns {string} Die Akzentfarbe als Hex-Code
+     */
+    getAccentColor() {
+      return localStorage.getItem(this.storageKeys.ACCENT_COLOR) || this.defaultAccentColor;
+    }
+  
+    /**
+     * Speichert die Akzentfarbe
+     * @param {string} colorHex - Die zu speichernde Akzentfarbe als Hex-Code
+     * @returns {boolean} Erfolgsstatus
+     */
+    saveAccentColor(colorHex) {
+      try {
+        localStorage.setItem(this.storageKeys.ACCENT_COLOR, colorHex);
+        return true;
+      } catch (error) {
+        console.error('Fehler beim Speichern der Akzentfarbe:', error);
+        return false;
+      }
+    }
+  
+    /**
+     * Setzt die Akzentfarbe auf den Standardwert zurück
+     */
+    resetAccentColor() {
+      localStorage.setItem(this.storageKeys.ACCENT_COLOR, this.defaultAccentColor);
+      return this.defaultAccentColor;
+    }
+  
+    /**
      * Setzt alle gespeicherten Daten zurück
      */
     clearAllData() {
       localStorage.removeItem(this.storageKeys.RESUME_DATA);
       localStorage.removeItem(this.storageKeys.PROFILE_IMAGE);
       localStorage.removeItem(this.storageKeys.FORM_PROGRESS);
+      localStorage.removeItem(this.storageKeys.ACCENT_COLOR);
     }
   }
   
