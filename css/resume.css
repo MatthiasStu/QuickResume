@@ -31,10 +31,7 @@
     width: 100px;
     height: 100px;
     object-fit: cover;
-    /* Remove the border-radius to make it square */
-    /* border-radius: 50%; - Remove this line */
-    /* Remove the circular border */
-    /* border: 3px solid #3498db; - Remove this line */
+ 
 }
 
 .resumeHeader h1 {

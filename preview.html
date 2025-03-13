@@ -9,36 +9,34 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
         rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="resume.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/resume.css">
     <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
-    <!-- Include html2pdf library -->
-    <!-- Add this before your script.js -->
+    <!-- HTML2PDF-Bibliothek für die PDF-Generierung einbinden -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"
         integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script src="form-controller.js"></script>
-    <script src="form-templates.js"></script>
-    <script src="script.js"></script>
+    <!-- Hauptanwendungs-Skript im Modul-Format -->
+    <script type="module" src="js/app.js"></script>
     <title>QuickResume - Preview</title>
 </head>
 
-<body onload="loadPreview()">
+<body>
     <div class="navBar">
-        <img src="img/logo.png" class="logo" onclick="navigateToLandingPage(true)">
+        <img src="img/logo.png" class="logo">
         <ul class="navBarItems">
-            <li><a href="#home" onclick="navigateToLandingPage(true)">Home</a></li>
+            <li><a href="#home">Home</a></li>
             <li><a href="#templates">Templates</a></li>
             <li><a href="#start">Start</a></li>
             <li><a href="#help">Help</a></li>
         </ul>
     </div>
 
-    <div id="customConfirm" class="modal" onclick="confirmAction(false)">
+    <div id="customConfirm" class="modal">
         <div class="modal-content" onclick="event.stopPropagation()">
             <p>Bist du sicher, dass du zurück zur Startseite möchtest?</p>
-            <button class="confirm-btn" onclick="confirmAction(true)">Ja</button>
-            <button class="cancel-btn" onclick="confirmAction(false)">Nein</button>
+            <button class="confirm-btn">Ja</button>
+            <button class="cancel-btn">Nein</button>
         </div>
     </div>
 
@@ -87,9 +85,9 @@
      
 
         <div class="btnSection2">
-            <button class="backButton" onclick="navigateBackFromPreview()">Zurück</button>
-            <button class="downloadButton" onclick="generatePDF()">PDF Herunterladen</button>
-            <button class="blueButton2" onclick="nextStep(75); window.location.href='finalpage.html'">Weiter</button>
+            <button class="backButton">Zurück</button>
+            <button class="downloadButton">PDF Herunterladen</button>
+            <button class="blueButton2" onclick="window.location.href='finalpage.html'">Weiter</button>
         </div>
     </div>
 </body>
