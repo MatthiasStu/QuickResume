@@ -7,6 +7,7 @@
 import dataManager from '../core/dataManager.js';
 import navigation from '../core/navigation.js';
 import pdfGenerator from '../utils/pdfGenerator.js';
+import styleSwitcher from './styleSwitcher.js';
 
 class PreviewRenderer {
   constructor() {
@@ -35,6 +36,9 @@ class PreviewRenderer {
     
     // Initialisiere den Color Picker
     this.initColorPicker();
+    
+    // Initialisiere den Style Switcher
+    styleSwitcher.init();
     
     // Wenn wir auf der Vorschauseite sind, lade die Vorschau
     if (document.getElementById('resumePreview')) {
@@ -125,6 +129,11 @@ class PreviewRenderer {
       heading.style.color = color;
     });
     
+    // Update style switcher with new color
+    if (styleSwitcher) {
+      styleSwitcher.updateAccentColor(color);
+    }
+    
     // Speichere die Farbe für die PDF-Generierung
     if (color !== this.currentAccentColor) {
       this.currentAccentColor = color;
@@ -147,35 +156,11 @@ class PreviewRenderer {
       return;
     }
     
-    // Grundlegende Informationen
-    this.updateTextContent("previewFirstName", resumeData.firstName || '');
-    this.updateTextContent("previewLastName", resumeData.lastName || '');
-    this.updateTextContent("previewPhone", resumeData.phone || '');
-    this.updateTextContent("previewMail", resumeData.mail || '');
-    
-    // Profilbild hinzufügen
-    this.updateProfileImage(profileImage);
-    
-    // Kontaktinformationen ein-/ausblenden
-    document.getElementById("contactPhone").style.display = resumeData.phone ? 'inline' : 'none';
-    document.getElementById("contactEmail").style.display = resumeData.mail ? 'inline' : 'none';
-    
-    // Bildung
-    this.updateTextContent("previewSchool", resumeData.school || 'IGS Melle');
-    this.updateTextContent("previewDegree", resumeData.degree || 'Erweiterter Sekundarabschluss 2');
-    this.updateTextContent("previewGraduationYear", resumeData.graduationYear || '2018');
-    
-    // Berufserfahrung
-    this.updateTextContent("previewCompany", resumeData.company || 'Developer Akademie');
-    this.updateTextContent("previewPosition", resumeData.position || 'Weiterbildung zum Frontend Web Developer');
-    this.updateTextContent("previewWorkPeriod", resumeData.workPeriod || '2018-2019');
-    this.updateTextContent("previewDescription", resumeData.description || 'TÜV Zertifizierter Bildungsträger, weiterbildung zum Softwareentwickler Schwerpunkt Frontend Entwicklung');
-    
-    // Nur die Hauptüberschriften in Akzentfarbe
-    this.updateSectionColors();
-    
-    // Leere Sektionen ausblenden
-    this.hideEmptySections();
+    // Alle Vorschau-Templates aktualisieren (für alle Stile)
+    const previewTemplates = document.querySelectorAll('.resumeTemplate');
+    previewTemplates.forEach(template => {
+      this.updateTemplate(template, resumeData, profileImage);
+    });
     
     // Wende die gespeicherte Akzentfarbe an
     this.applyAccentColor(this.currentAccentColor);
@@ -184,18 +169,83 @@ class PreviewRenderer {
   }
 
   /**
-   * Setzt die korrekten Farben für alle Abschnitte im Lebenslauf
+   * Aktualisiert ein bestimmtes Template mit den Daten
+   * @param {HTMLElement} template - Das zu aktualisierende Template
+   * @param {Object} resumeData - Die Lebenslaufdaten
+   * @param {string} profileImage - Das Profilbild als Data-URL
    */
-  updateSectionColors() {
+  updateTemplate(template, resumeData, profileImage) {
+    // Selektiere Elemente im spezifischen Template
+    const firstNameEl = template.querySelector('[id^="previewFirstName"]');
+    const lastNameEl = template.querySelector('[id^="previewLastName"]');
+    const phoneEl = template.querySelector('[id^="previewPhone"]');
+    const mailEl = template.querySelector('[id^="previewMail"]');
+    const schoolEl = template.querySelector('[id^="previewSchool"]');
+    const degreeEl = template.querySelector('[id^="previewDegree"]');
+    const gradYearEl = template.querySelector('[id^="previewGraduationYear"]');
+    const companyEl = template.querySelector('[id^="previewCompany"]');
+    const positionEl = template.querySelector('[id^="previewPosition"]');
+    const workPeriodEl = template.querySelector('[id^="previewWorkPeriod"]');
+    const descriptionEl = template.querySelector('[id^="previewDescription"]');
+    const profileImageEl = template.querySelector('[id^="previewProfileImage"]');
+    const contactPhoneEl = template.querySelector('[id^="contactPhone"]');
+    const contactEmailEl = template.querySelector('[id^="contactEmail"]');
+    
+    // Grundlegende Informationen aktualisieren
+    if (firstNameEl) firstNameEl.textContent = resumeData.firstName || '';
+    if (lastNameEl) lastNameEl.textContent = resumeData.lastName || '';
+    if (phoneEl) phoneEl.textContent = resumeData.phone || '';
+    if (mailEl) mailEl.textContent = resumeData.mail || '';
+    
+    // Kontaktinformationen ein-/ausblenden
+    if (contactPhoneEl) contactPhoneEl.style.display = resumeData.phone ? 'inline' : 'none';
+    if (contactEmailEl) contactEmailEl.style.display = resumeData.mail ? 'inline' : 'none';
+    
+    // Bildung
+    if (schoolEl) schoolEl.textContent = resumeData.school || 'IGS Melle';
+    if (degreeEl) degreeEl.textContent = resumeData.degree || 'Erweiterter Sekundarabschluss 2';
+    if (gradYearEl) gradYearEl.textContent = resumeData.graduationYear || '2018';
+    
+    // Berufserfahrung
+    if (companyEl) companyEl.textContent = resumeData.company || 'Developer Akademie';
+    if (positionEl) positionEl.textContent = resumeData.position || 'Weiterbildung zum Frontend Web Developer';
+    if (workPeriodEl) workPeriodEl.textContent = resumeData.workPeriod || '2018-2019';
+    if (descriptionEl) descriptionEl.textContent = resumeData.description || 'TÜV Zertifizierter Bildungsträger, weiterbildung zum Softwareentwickler Schwerpunkt Frontend Entwicklung';
+    
+    // Profilbild aktualisieren
+    if (profileImageEl) {
+      this.updateProfileImage(profileImage, profileImageEl);
+    }
+    
+    // Leere Sektionen ausblenden
+    const educationSection = template.querySelector('[id^="educationSection"]');
+    const experienceSection = template.querySelector('[id^="experienceSection"]');
+    
+    const hasEducation = resumeData.school || resumeData.degree || resumeData.graduationYear;
+    const hasExperience = resumeData.company || resumeData.position || 
+                          resumeData.workPeriod || resumeData.description;
+    
+    if (educationSection) educationSection.style.display = hasEducation ? 'block' : 'none';
+    if (experienceSection) experienceSection.style.display = hasExperience ? 'block' : 'none';
+    
+    // Sektions-Farben nur für Hauptüberschriften in Akzentfarbe
+    this.updateSectionColors(template);
+  }
+
+  /**
+   * Setzt die korrekten Farben für alle Abschnitte im Lebenslauf
+   * @param {HTMLElement} template - Das Template, in dem Farben aktualisiert werden sollen
+   */
+  updateSectionColors(template) {
     // Institutionen/Unternehmen sollten normale Farbe haben, nicht die Akzentfarbe
-    const schoolEl = document.getElementById("previewSchool");
-    const companyEl = document.getElementById("previewCompany");
+    const schoolEl = template.querySelector('[id^="previewSchool"]');
+    const companyEl = template.querySelector('[id^="previewCompany"]');
     
     if (schoolEl) schoolEl.style.color = "#333";
     if (companyEl) companyEl.style.color = "#333";
     
     // Überschriften haben die Akzentfarbe (wird durch applyAccentColor behandelt)
-    const sectionTitles = document.querySelectorAll('.resumeSection h2');
+    const sectionTitles = template.querySelectorAll('.resumeSection h2');
     sectionTitles.forEach(title => {
       title.style.color = this.currentAccentColor;
     });
@@ -216,9 +266,9 @@ class PreviewRenderer {
   /**
    * Aktualisiert das Profilbild in der Vorschau
    * @param {string} profileImage - Das Profilbild als Data-URL
+   * @param {HTMLElement} previewProfileImage - Das Element für das Profilbild
    */
-  updateProfileImage(profileImage) {
-    const previewProfileImage = document.getElementById("previewProfileImage");
+  updateProfileImage(profileImage, previewProfileImage) {
     if (!previewProfileImage) return;
     
     if (profileImage) {
@@ -246,18 +296,20 @@ class PreviewRenderer {
     // Prüfe Bildungssektion
     const resumeData = dataManager.getResumeData();
     const hasEducation = resumeData.school || resumeData.degree || resumeData.graduationYear;
-    const educationSection = document.getElementById("educationSection");
-    if (educationSection) {
-      educationSection.style.display = hasEducation ? 'block' : 'none';
-    }
+    const educationSections = document.querySelectorAll('[id^="educationSection"]');
+    
+    educationSections.forEach(section => {
+      section.style.display = hasEducation ? 'block' : 'none';
+    });
     
     // Prüfe Berufserfahrungssektion
     const hasExperience = resumeData.company || resumeData.position || 
                           resumeData.workPeriod || resumeData.description;
-    const experienceSection = document.getElementById("experienceSection");
-    if (experienceSection) {
-      experienceSection.style.display = hasExperience ? 'block' : 'none';
-    }
+    const experienceSections = document.querySelectorAll('[id^="experienceSection"]');
+    
+    experienceSections.forEach(section => {
+      section.style.display = hasExperience ? 'block' : 'none';
+    });
   }
 }
 

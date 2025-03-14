@@ -17,9 +17,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script type="module" src="js/app.js"></script>
     <title>QuickResume - Preview</title>
-    <style>
-       
-    </style>
 </head>
 
 <body>
@@ -61,44 +58,159 @@
             <button class="reset-color" id="resetColor">Zurücksetzen</button>
         </div>
 
-        <div class="previewContainer">
-            <div id="resumePreview" class="resumeTemplate">
-                <!-- Header -->
-                <div class="resumeHeader">
-                    <div class="header-text">
-                        <h1><span id="previewFirstName"></span> <span id="previewLastName"></span></h1>
-                        <div class="contactInfo">
-                            <span class="contactItem" id="contactPhone">Tel: <span id="previewPhone"></span></span>
-                            <span class="contactItem" id="contactEmail">E-Mail: <span id="previewMail"></span></span>
+        <!-- Style Switcher Container -->
+        <div class="style-switcher-container">
+            <button id="prevStyleBtn" class="style-nav-button">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+            </button>
+            
+            <div class="style-indicator">
+                <span id="styleIndicator">Style 1/3</span>
+            </div>
+            
+            <button id="nextStyleBtn" class="style-nav-button">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+            </button>
+        </div>
+
+        <!-- Styles Container -->
+        <div class="styles-container">
+            <div id="resumeStylesWrapper">
+                <!-- Style 1 (Original) -->
+                <div class="resumeStyleSlide active" id="resumeStyle1">
+                    <div class="previewContainer">
+                        <div id="resumePreview" class="resumeTemplate style1">
+                            <!-- Header -->
+                            <div class="resumeHeader">
+                                <div class="header-text">
+                                    <h1><span id="previewFirstName"></span> <span id="previewLastName"></span></h1>
+                                    <div class="contactInfo">
+                                        <span class="contactItem" id="contactPhone">Tel: <span id="previewPhone"></span></span>
+                                        <span class="contactItem" id="contactEmail">E-Mail: <span id="previewMail"></span></span>
+                                    </div>
+                                </div>
+                                <div class="header-image" id="previewProfileImage">
+                                    <!-- Profilbild wird hier eingefügt -->
+                                </div>
+                            </div>
+                            
+                            <!-- Bildung -->
+                            <div id="educationSection" class="resumeSection">
+                                <h2>Bildung</h2>
+                                <div class="resumeItem">
+                                    <div class="resumeItemHeader">
+                                        <span class="resumeItemTitle" id="previewDegree">Abschluss</span>
+                                        <span class="resumeItemPeriod" id="previewGraduationYear"></span>
+                                    </div>
+                                    <div class="resumeItemSubtitle" id="previewSchool"></div>
+                                </div>
+                            </div>
+                            
+                            <!-- Berufserfahrung -->
+                            <div id="experienceSection" class="resumeSection">
+                                <h2>Berufserfahrung</h2>
+                                <div class="resumeItem">
+                                    <div class="resumeItemHeader">
+                                        <span class="resumeItemTitle" id="previewPosition">Position</span>
+                                        <span class="resumeItemPeriod" id="previewWorkPeriod"></span>
+                                    </div>
+                                    <div class="resumeItemSubtitle" id="previewCompany"></div>
+                                    <div class="resumeItemDescription" id="previewDescription"></div>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                    <div class="header-image" id="previewProfileImage">
-                        <!-- Profilbild wird hier eingefügt -->
                     </div>
                 </div>
                 
-                <!-- Bildung -->
-                <div id="educationSection" class="resumeSection">
-                    <h2>Bildung</h2>
-                    <div class="resumeItem">
-                        <div class="resumeItemHeader">
-                            <span class="resumeItemTitle" id="previewDegree">Abschluss</span>
-                            <span class="resumeItemPeriod" id="previewGraduationYear"></span>
+                <!-- Style 2 -->
+                <div class="resumeStyleSlide" id="resumeStyle2">
+                    <div class="previewContainer">
+                        <div id="resumePreview2" class="resumeTemplate style2">
+                            <!-- Header -->
+                            <div class="resumeHeader">
+                                <div class="header-text">
+                                    <h1><span id="previewFirstName2"></span> <span id="previewLastName2"></span></h1>
+                                    <div class="contactInfo">
+                                        <span class="contactItem" id="contactPhone2">Tel: <span id="previewPhone2"></span></span>
+                                        <span class="contactItem" id="contactEmail2">E-Mail: <span id="previewMail2"></span></span>
+                                    </div>
+                                </div>
+                                <div class="header-image" id="previewProfileImage2">
+                                    <!-- Profilbild wird hier eingefügt -->
+                                </div>
+                            </div>
+                            
+                            <!-- Bildung -->
+                            <div id="educationSection2" class="resumeSection">
+                                <h2>Bildung</h2>
+                                <div class="resumeItem">
+                                    <div class="resumeItemHeader">
+                                        <span class="resumeItemTitle" id="previewDegree2">Abschluss</span>
+                                        <span class="resumeItemPeriod" id="previewGraduationYear2"></span>
+                                    </div>
+                                    <div class="resumeItemSubtitle" id="previewSchool2"></div>
+                                </div>
+                            </div>
+                            
+                            <!-- Berufserfahrung -->
+                            <div id="experienceSection2" class="resumeSection">
+                                <h2>Berufserfahrung</h2>
+                                <div class="resumeItem">
+                                    <div class="resumeItemHeader">
+                                        <span class="resumeItemTitle" id="previewPosition2">Position</span>
+                                        <span class="resumeItemPeriod" id="previewWorkPeriod2"></span>
+                                    </div>
+                                    <div class="resumeItemSubtitle" id="previewCompany2"></div>
+                                    <div class="resumeItemDescription" id="previewDescription2"></div>
+                                </div>
+                            </div>
                         </div>
-                        <div class="resumeItemSubtitle" id="previewSchool"></div>
                     </div>
                 </div>
                 
-                <!-- Berufserfahrung -->
-                <div id="experienceSection" class="resumeSection">
-                    <h2>Berufserfahrung</h2>
-                    <div class="resumeItem">
-                        <div class="resumeItemHeader">
-                            <span class="resumeItemTitle" id="previewPosition">Position</span>
-                            <span class="resumeItemPeriod" id="previewWorkPeriod"></span>
+                <!-- Style 3 -->
+                <div class="resumeStyleSlide" id="resumeStyle3">
+                    <div class="previewContainer">
+                        <div id="resumePreview3" class="resumeTemplate style3">
+                            <!-- Header -->
+                            <div class="resumeHeader">
+                                <div class="header-image" id="previewProfileImage3">
+                                    <!-- Profilbild wird hier eingefügt -->
+                                </div>
+                                <div class="header-text">
+                                    <h1><span id="previewFirstName3"></span> <span id="previewLastName3"></span></h1>
+                                    <div class="contactInfo">
+                                        <span class="contactItem" id="contactPhone3">Tel: <span id="previewPhone3"></span></span>
+                                        <span class="contactItem" id="contactEmail3">E-Mail: <span id="previewMail3"></span></span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Bildung -->
+                            <div id="educationSection3" class="resumeSection">
+                                <h2>Bildung</h2>
+                                <div class="resumeItem">
+                                    <div class="resumeItemHeader">
+                                        <span class="resumeItemTitle" id="previewDegree3">Abschluss</span>
+                                        <span class="resumeItemPeriod" id="previewGraduationYear3"></span>
+                                    </div>
+                                    <div class="resumeItemSubtitle" id="previewSchool3"></div>
+                                </div>
+                            </div>
+                            
+                            <!-- Berufserfahrung -->
+                            <div id="experienceSection3" class="resumeSection">
+                                <h2>Berufserfahrung</h2>
+                                <div class="resumeItem">
+                                    <div class="resumeItemHeader">
+                                        <span class="resumeItemTitle" id="previewPosition3">Position</span>
+                                        <span class="resumeItemPeriod" id="previewWorkPeriod3"></span>
+                                    </div>
+                                    <div class="resumeItemSubtitle" id="previewCompany3"></div>
+                                    <div class="resumeItemDescription" id="previewDescription3"></div>
+                                </div>
+                            </div>
                         </div>
-                        <div class="resumeItemSubtitle" id="previewCompany"></div>
-                        <div class="resumeItemDescription" id="previewDescription"></div>
                     </div>
                 </div>
             </div>
