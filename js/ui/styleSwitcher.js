@@ -184,7 +184,7 @@ class StyleSwitcher {
      */
     updateStyleIndicator() {
       if (this.indicator) {
-        this.indicator.textContent = `Style ${this.currentStyleIndex + 1}/${this.totalStyles}`;
+        this.indicator.textContent = `Template ${this.currentStyleIndex + 1}/${this.totalStyles}`;
       }
     }
   

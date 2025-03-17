@@ -144,18 +144,22 @@ class PDFGenerator {
    * @returns {string} Das HTML-Template als String
    */
   createStyle1Template(data, profileImageSrc, accentColor) {
-    // Daten extrahieren
+    // Daten extrahieren und mit Leerzeichen zwischen Wörtern sicherstellen
     const firstName = data.firstName || '';
     const lastName = data.lastName || '';
     const phone = data.phone || '';
     const email = data.mail || '';
-    const school = data.school || '';
-    const degree = data.degree || '';
-    const graduationYear = data.graduationYear || '';
-    const company = data.company || '';
-    const position = data.position || '';
-    const workPeriod = data.workPeriod || '';
-    const description = data.description || '';
+    
+    // Bildungsdaten mit korrekten Abständen
+    const school = data.school || 'IGS Melle';
+    const degree = this.ensureProperSpacing(data.degree || 'Erweiterter Sekundarabschluss 1');
+    const graduationYear = data.graduationYear || '2018';
+    
+    // Berufserfahrungsdaten mit korrekten Abständen
+    const company = data.company || 'Developer Akademie';
+    const position = this.ensureProperSpacing(data.position || 'Weiterbildung zum Frontend Web Developer');
+    const workPeriod = data.workPeriod || '2018-2019';
+    const description = this.ensureProperSpacing(data.description || 'TÜV Zertifizierter Bildungsträger, weiterbildung zum Softwareentwickler Schwerpunkt Frontend Entwicklung');
     
     // Nutze die bereitgestellte Akzentfarbe oder Standard-Blau, falls keine angegeben
     const themeColor = accentColor || '#3498db';
@@ -192,10 +196,10 @@ class PDFGenerator {
           
           <div style="margin-bottom: 15px;">
             <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
-              <span style="font-weight: bold; font-size: 16px; color: #333;">${degree || 'Erweiterter Sekundarabschluss 2'}</span>
-              <span style="font-style: italic; color: #666;">${graduationYear || '2020'}</span>
+              <span style="font-weight: bold; font-size: 16px; color: #333;">${degree}</span>
+              <span style="font-style: italic; color: #666;">${graduationYear}</span>
             </div>
-            <div style="font-size: 15px; color: #333; margin-bottom: 5px;">${school || 'IGS Melle'}</div>
+            <div style="font-size: 15px; color: #333; margin-bottom: 5px;">${school}</div>
           </div>
         </div>
         
@@ -205,11 +209,11 @@ class PDFGenerator {
           
           <div style="margin-bottom: 15px;">
             <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
-              <span style="font-weight: bold; font-size: 16px; color: #333;">${position || 'Weiterbildung zum Frontend Web Developer'}</span>
-              <span style="font-style: italic; color: #666;">${workPeriod || '2018-2019'}</span>
+              <span style="font-weight: bold; font-size: 16px; color: #333;">${position}</span>
+              <span style="font-style: italic; color: #666;">${workPeriod}</span>
             </div>
-            <div style="font-size: 15px; color: #333; margin-bottom: 5px;">${company || 'Developer Akademie'}</div>
-            <div style="font-size: 14px; line-height: 1.4; margin-top: 8px; color: #333;">${description || 'TÜV Zertifizierter Bildungsträger, weiterbildung zum Softwareentwickler Schwerpunkt Frontend Entwicklung'}</div>
+            <div style="font-size: 15px; color: #333; margin-bottom: 5px;">${company}</div>
+            <div style="font-size: 14px; line-height: 1.6; margin-top: 8px; color: #333; word-spacing: 0.1em; letter-spacing: 0.02em;">${description}</div>
           </div>
         </div>
       </div>
@@ -217,28 +221,29 @@ class PDFGenerator {
   }
 
   /**
-   * Fixed Style 2 Template - Better date handling
+   * Erstellt das Stil 2 Template mit verbesserten Abständen
    * @param {Object} data - Die Lebenslaufdaten
    * @param {string} profileImageSrc - Die Profilbild-URL
    * @param {string} accentColor - Die Akzentfarbe
    * @returns {string} Das HTML-Template als String
    */
   createStyle2Template(data, profileImageSrc, accentColor) {
-    // Daten extrahieren
+    // Daten extrahieren mit korrekten Abständen
     const firstName = data.firstName || '';
     const lastName = data.lastName || '';
     const phone = data.phone || '';
     const email = data.mail || '';
-    const school = data.school || '';
-    const degree = data.degree || '';
-    const graduationYear = data.graduationYear || '';
-    const company = data.company || '';
-    const position = data.position || '';
-    const workPeriod = data.workPeriod || '';
-    const description = data.description || '';
     
-    // Format the work period to avoid hyphen issues (add proper spacing)
-    const formattedWorkPeriod = workPeriod ? workPeriod.replace('-', ' - ') : '2018 - 2019';
+    // Bildungsdaten mit korrekten Abständen
+    const school = data.school || 'IGS Melle';
+    const degree = this.ensureProperSpacing(data.degree || 'Erweiterter Sekundarabschluss 1');
+    const graduationYear = data.graduationYear || '2018';
+    
+    // Berufserfahrungsdaten mit korrekten Abständen
+    const company = data.company || 'Developer Akademie';
+    const position = this.ensureProperSpacing(data.position || 'Weiterbildung zum Frontend Web Developer');
+    const workPeriod = data.workPeriod ? data.workPeriod.replace(/-/g, ' - ') : '2018 - 2019';
+    const description = this.ensureProperSpacing(data.description || 'TÜV Zertifizierter Bildungsträger, weiterbildung zum Softwareentwickler Schwerpunkt Frontend Entwicklung');
     
     // Nutze die bereitgestellte Akzentfarbe oder Standard-Lila, falls keine angegeben
     const themeColor = accentColor || '#3498db';
@@ -274,14 +279,14 @@ class PDFGenerator {
             <table style="width: 100%; border-collapse: collapse;">
               <tr>
                 <td style="vertical-align: top; width: 70%;">
-                  <span style="font-weight: bold; font-size: 17px; color: #333; display: block;">${degree || 'Erweiterter Sekundarabschluss 2'}</span>
+                  <span style="font-weight: bold; font-size: 17px; color: #333; display: block; word-spacing: 0.1em; letter-spacing: 0.02em;">${degree}</span>
                 </td>
                 <td style="vertical-align: top; text-align: right; width: 30%;">
-                  <span style="font-style: italic; color: #666;">${graduationYear || '2020'}</span>
+                  <span style="font-style: italic; color: #666;">${graduationYear}</span>
                 </td>
               </tr>
             </table>
-            <div style="font-size: 15px; color: #333; margin-bottom: 5px; margin-top: 5px;">${school || 'IGS Melle'}</div>
+            <div style="font-size: 15px; color: #333; margin-bottom: 5px; margin-top: 5px;">${school}</div>
           </div>
         </div>
         
@@ -293,15 +298,15 @@ class PDFGenerator {
             <table style="width: 100%; border-collapse: collapse;">
               <tr>
                 <td style="vertical-align: top; width: 70%;">
-                  <span style="font-weight: bold; font-size: 17px; color: #333; display: block;">${position || 'Weiterbildung zum Frontend Web Developer'}</span>
+                  <span style="font-weight: bold; font-size: 17px; color: #333; display: block; word-spacing: 0.1em; letter-spacing: 0.02em;">${position}</span>
                 </td>
                 <td style="vertical-align: top; text-align: right; width: 30%;">
-                  <span style="font-style: italic; color: #666;">${formattedWorkPeriod}</span>
+                  <span style="font-style: italic; color: #666;">${workPeriod}</span>
                 </td>
               </tr>
             </table>
-            <div style="font-size: 15px; color: #333; margin-top: 5px; margin-bottom: 5px;">${company || 'Developer Akademie'}</div>
-            <div style="font-size: 14px; line-height: 1.4; margin-top: 8px; color: #333;">${description || 'TÜV Zertifizierter Bildungsträger, weiterbildung zum Softwareentwickler Schwerpunkt Frontend Entwicklung'}</div>
+            <div style="font-size: 15px; color: #333; margin-top: 5px; margin-bottom: 5px;">${company}</div>
+            <div style="font-size: 14px; line-height: 1.6; margin-top: 8px; color: #333; word-spacing: 0.1em; letter-spacing: 0.02em;">${description}</div>
           </div>
         </div>
       </div>
@@ -309,34 +314,38 @@ class PDFGenerator {
   }
 
   /**
- * Fixed Style 3 Template with correct text alignment
- * @param {Object} data - Die Lebenslaufdaten
- * @param {string} profileImageSrc - Die Profilbild-URL
- * @param {string} accentColor - Die Akzentfarbe
- * @returns {string} Das HTML-Template als String
- */
+   * Verbesserte Version des Stil 3 Templates mit korrekter Textausrichtung und Abständen
+   * @param {Object} data - Die Lebenslaufdaten
+   * @param {string} profileImageSrc - Die Profilbild-URL
+   * @param {string} accentColor - Die Akzentfarbe
+   * @returns {string} Das HTML-Template als String
+   */
   createStyle3Template(data, profileImageSrc, accentColor) {
-    // Daten extrahieren
+    // Daten extrahieren mit korrekten Abständen
     const firstName = data.firstName || '';
     const lastName = data.lastName || '';
     const phone = data.phone || '';
     const email = data.mail || '';
-    const school = data.school || '';
-    const degree = data.degree || '';
-    const graduationYear = data.graduationYear || '';
-    const company = data.company || '';
-    const position = data.position || '';
-    const workPeriod = data.workPeriod || '';
-    const description = data.description || '';
+    
+    // Bildungsdaten mit korrekten Abständen
+    const school = data.school || 'IGS Melle';
+    const degree = this.ensureProperSpacing(data.degree || 'Erweiterter Sekundarabschluss 1');
+    const graduationYear = data.graduationYear || '2018';
+    
+    // Berufserfahrungsdaten mit korrekten Abständen
+    const company = data.company || 'Developer Akademie';
+    const position = this.ensureProperSpacing(data.position || 'Weiterbildung zum Frontend Web Developer');
+    const workPeriod = data.workPeriod ? data.workPeriod.replace(/-/g, ' - ') : '2018 - 2019';
+    const description = this.ensureProperSpacing(data.description || 'TÜV Zertifizierter Bildungsträger, weiterbildung zum Softwareentwickler Schwerpunkt Frontend Entwicklung');
     
     // Nutze die bereitgestellte Akzentfarbe oder Standard-Blau, falls keine angegeben
     const themeColor = accentColor || '#3498db';
     
-    // This approach uses simple table structure with mixed alignments for maximum PDF compatibility
+    // Verbesserte Version mit saubererem HTML und korrekten Abständen
     return `
       <div style="font-family: 'Trebuchet MS', sans-serif; color: #222; line-height: 1.6; padding: 20px 30px; width: 100%;">
         <!-- Header - centered -->
-        <table width="100%" cellspacing="0" cellpadding="0" style="margin-bottom: 20px;">
+        <table width="100%" cellspacing="0" cellpadding="0" style="margin-bottom: 20px; border-collapse: separate;">
           <tr>
             <td align="center">
               ${profileImageSrc ? `<img src="${profileImageSrc}" width="100" style="border-radius: 5px;">` : ''}
@@ -356,7 +365,7 @@ class PDFGenerator {
         </table>
         
         <!-- Bildung Section - heading centered -->
-        <table width="100%" cellspacing="0" cellpadding="0" style="margin-top: 30px; margin-bottom: 30px;">
+        <table width="100%" cellspacing="0" cellpadding="0" style="margin-top: 30px; margin-bottom: 30px; border-collapse: separate;">
           <tr>
             <td align="center">
               <span style="font-size: 20px; color: ${themeColor}; font-weight: bold;">Bildung</span>
@@ -369,23 +378,23 @@ class PDFGenerator {
           </tr>
           <tr>
             <td align="center" style="padding-top: 15px;">
-              <span style="font-weight: bold; font-size: 16px; color: #333;">${degree || 'Erweiterter Sekundarabschluss 2'}</span>
+              <span style="font-weight: bold; font-size: 16px; color: #333; word-spacing: 0.1em; letter-spacing: 0.02em;">${degree}</span>
             </td>
           </tr>
           <tr>
             <td align="center">
-              <span style="font-style: italic; font-size: 14px; color: #666;">${graduationYear || '2020'}</span>
+              <span style="font-style: italic; font-size: 14px; color: #666;">${graduationYear}</span>
             </td>
           </tr>
           <tr>
             <td align="center" style="padding-top: 5px;">
-              <span style="font-size: 15px; color: #333;">${school || 'IGS Melle'}</span>
+              <span style="font-size: 15px; color: #333;">${school}</span>
             </td>
           </tr>
         </table>
         
-        <!-- Berufserfahrung Section - heading centered, description left-aligned -->
-        <table width="100%" cellspacing="0" cellpadding="0" style="margin-top: 30px; margin-bottom: 30px;">
+        <!-- Berufserfahrung Section - heading centered -->
+        <table width="100%" cellspacing="0" cellpadding="0" style="margin-top: 30px; margin-bottom: 15px; border-collapse: separate;">
           <tr>
             <td align="center">
               <span style="font-size: 20px; color: ${themeColor}; font-weight: bold;">Berufserfahrung</span>
@@ -398,33 +407,53 @@ class PDFGenerator {
           </tr>
           <tr>
             <td align="center" style="padding-top: 15px;">
-              <span style="font-weight: bold; font-size: 16px; color: #333;">${position || 'Weiterbildung zum Frontend Web Developer'}</span>
+              <span style="font-weight: bold; font-size: 16px; color: #333; word-spacing: 0.1em; letter-spacing: 0.02em;">${position}</span>
             </td>
           </tr>
           <tr>
             <td align="center">
-              <span style="font-style: italic; font-size: 14px; color: #666;">${workPeriod || '2018-2019'}</span>
+              <span style="font-style: italic; font-size: 14px; color: #666;">${workPeriod}</span>
             </td>
           </tr>
           <tr>
-            <td align="center" style="padding-top: 5px;">
-              <span style="font-size: 15px; color: #333;">${company || 'Developer Akademie'}</span>
+            <td align="center" style="padding-top: 5px; padding-bottom: 15px;">
+              <span style="font-size: 15px; color: #333;">${company}</span>
             </td>
           </tr>
         </table>
         
-        <!-- IMPORTANT: Separate table just for the description with forced left alignment -->
-        <table width="100%" cellspacing="0" cellpadding="0">
-          <tr>
-            <td align="left" style="text-align: left !important;">
-              <span style="font-size: 14px; line-height: 1.4; color: #333; text-align: left !important;">
-                ${description || 'TÜV Zertifizierter Bildungsträger, weiterbildung zum Softwareentwickler Schwerpunkt Frontend Entwicklung'}
-              </span>
-            </td>
-          </tr>
-        </table>
+        <!-- Description with proper left alignment and spacing -->
+        <div style="text-align: left; padding: 0 20px;">
+          <p style="font-size: 14px; line-height: 1.6; color: #333; word-spacing: 0.1em; letter-spacing: 0.02em; margin-top: 0;">${description}</p>
+        </div>
       </div>
     `;
+  }
+
+  /**
+   * Hilfsfunktion, um korrekte Wortabstände sicherzustellen
+   * @param {string} text - Der zu formatierende Text
+   * @returns {string} Formatierter Text mit korrekten Wortabständen
+   */
+  ensureProperSpacing(text) {
+    if (!text) return '';
+    
+    // 1. Ersetze mehrfache Leerzeichen durch ein einzelnes
+    let result = text.replace(/\s+/g, ' ');
+    
+    // 2. Stelle sicher, dass nach jedem Komma ein Leerzeichen folgt
+    result = result.replace(/,(?!\s)/g, ', ');
+    
+    // 3. Stelle sicher, dass nach "Sekundarabschluss" und vor Zahlen ein Leerzeichen steht
+    result = result.replace(/(Sekundarabschluss)(\d)/g, '$1 $2');
+    
+    // 4. Stelle sicher, dass TÜV und Zertifizierter richtig getrennt sind
+    result = result.replace(/TÜV(?!\s)Zertifizierter/g, 'TÜV Zertifizierter');
+    
+    // 5. Ersetze Bindestriche in Zeiträumen mit umgebenden Leerzeichen
+    result = result.replace(/(\d+)-(\d+)/g, '$1 - $2');
+    
+    return result;
   }
 }
 
